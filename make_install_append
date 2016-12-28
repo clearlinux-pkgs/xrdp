@@ -1,0 +1,1 @@
+mv %{buildroot}/usr/share/defaults/xrdp/pam.d %{buildroot}/usr/share

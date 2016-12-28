@@ -4,7 +4,7 @@
 #
 Name     : xrdp
 Version  : 0.9.1
-Release  : 2
+Release  : 3
 URL      : https://github.com/neutrinolabs/xrdp/archive/v0.9.1.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/archive/v0.9.1.tar.gz
 Summary  : An open source Remote Desktop Protocol (RDP) server
@@ -107,6 +107,9 @@ make VERBOSE=1 V=1 %{?_smp_mflags} check
 %install
 rm -rf %{buildroot}
 %make_install
+## make_install_append content
+mv %{buildroot}/usr/share/defaults/xrdp/pam.d %{buildroot}/usr/share
+## make_install_append end
 
 %files
 %defattr(-,root,root,-)
@@ -130,7 +133,6 @@ rm -rf %{buildroot}
 
 %files data
 %defattr(-,root,root,-)
-/usr/share/defaults/xrdp/pam.d/xrdp-sesman
 /usr/share/defaults/xrdp/xrdp/cert.pem
 /usr/share/defaults/xrdp/xrdp/key.pem
 /usr/share/defaults/xrdp/xrdp/km-00000407.ini
@@ -159,6 +161,7 @@ rm -rf %{buildroot}
 /usr/share/defaults/xrdp/xrdp/xrdp.ini
 /usr/share/defaults/xrdp/xrdp/xrdp.sh
 /usr/share/defaults/xrdp/xrdp/xrdp_keyboard.ini
+/usr/share/pam.d/xrdp-sesman
 /usr/share/xrdp/ad24b.bmp
 /usr/share/xrdp/ad256.bmp
 /usr/share/xrdp/cursor0.cur
