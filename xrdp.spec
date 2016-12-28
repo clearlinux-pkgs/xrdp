@@ -4,7 +4,7 @@
 #
 Name     : xrdp
 Version  : 0.9.1
-Release  : 1
+Release  : 2
 URL      : https://github.com/neutrinolabs/xrdp/archive/v0.9.1.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/archive/v0.9.1.tar.gz
 Summary  : An open source Remote Desktop Protocol (RDP) server
@@ -13,8 +13,8 @@ License  : Apache-2.0
 Requires: xrdp-bin
 Requires: xrdp-config
 Requires: xrdp-lib
-Requires: xrdp-doc
 Requires: xrdp-data
+Requires: xrdp-doc
 BuildRequires : FreeRDP-dev
 BuildRequires : Linux-PAM-dev
 BuildRequires : libXfixes-dev
@@ -94,7 +94,7 @@ lib components for the xrdp package.
 %build
 export LANG=C
 export SOURCE_DATE_EPOCH=`date +%s -r configure.ac`
-%reconfigure --disable-static
+%reconfigure --disable-static --sysconfdir=/usr/share/defaults/xrdp
 make V=1  %{?_smp_mflags}
 
 %check
@@ -130,6 +130,35 @@ rm -rf %{buildroot}
 
 %files data
 %defattr(-,root,root,-)
+/usr/share/defaults/xrdp/pam.d/xrdp-sesman
+/usr/share/defaults/xrdp/xrdp/cert.pem
+/usr/share/defaults/xrdp/xrdp/key.pem
+/usr/share/defaults/xrdp/xrdp/km-00000407.ini
+/usr/share/defaults/xrdp/xrdp/km-00000409.ini
+/usr/share/defaults/xrdp/xrdp/km-0000040a.ini
+/usr/share/defaults/xrdp/xrdp/km-0000040b.ini
+/usr/share/defaults/xrdp/xrdp/km-0000040c.ini
+/usr/share/defaults/xrdp/xrdp/km-00000410.ini
+/usr/share/defaults/xrdp/xrdp/km-00000411.ini
+/usr/share/defaults/xrdp/xrdp/km-00000412.ini
+/usr/share/defaults/xrdp/xrdp/km-00000414.ini
+/usr/share/defaults/xrdp/xrdp/km-00000415.ini
+/usr/share/defaults/xrdp/xrdp/km-00000416.ini
+/usr/share/defaults/xrdp/xrdp/km-00000419.ini
+/usr/share/defaults/xrdp/xrdp/km-0000041d.ini
+/usr/share/defaults/xrdp/xrdp/km-00000807.ini
+/usr/share/defaults/xrdp/xrdp/km-00000809.ini
+/usr/share/defaults/xrdp/xrdp/km-0000080c.ini
+/usr/share/defaults/xrdp/xrdp/km-00000813.ini
+/usr/share/defaults/xrdp/xrdp/km-00000816.ini
+/usr/share/defaults/xrdp/xrdp/km-0000100c.ini
+/usr/share/defaults/xrdp/xrdp/pulse/default.pa
+/usr/share/defaults/xrdp/xrdp/rsakeys.ini
+/usr/share/defaults/xrdp/xrdp/sesman.ini
+/usr/share/defaults/xrdp/xrdp/startwm.sh
+/usr/share/defaults/xrdp/xrdp/xrdp.ini
+/usr/share/defaults/xrdp/xrdp/xrdp.sh
+/usr/share/defaults/xrdp/xrdp/xrdp_keyboard.ini
 /usr/share/xrdp/ad24b.bmp
 /usr/share/xrdp/ad256.bmp
 /usr/share/xrdp/cursor0.cur
