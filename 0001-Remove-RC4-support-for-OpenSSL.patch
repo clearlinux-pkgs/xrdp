@@ -1,6 +1,17 @@
---- xrdp-0.9.1/common/ssl_calls.c~	2016-12-22 17:04:29.000000000 +0000
-+++ xrdp-0.9.1/common/ssl_calls.c	2016-12-27 19:17:10.842435092 +0000
-@@ -22,7 +22,6 @@
+From fbffc3cd2b17196415dc74ebd922f36ec1464fc9 Mon Sep 17 00:00:00 2001
+From: George T Kramer <george.t.kramer@intel.com>
+Date: Fri, 31 Mar 2017 14:42:59 -0700
+Subject: [PATCH] Remove RC4 support for OpenSSL
+
+---
+ common/ssl_calls.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/common/ssl_calls.c b/common/ssl_calls.c
+index f92cc97..62307c8 100644
+--- a/common/ssl_calls.c
++++ b/common/ssl_calls.c
+@@ -26,7 +26,6 @@
  #include <stdlib.h> /* needed for openssl headers */
  #include <openssl/ssl.h>
  #include <openssl/err.h>
@@ -8,10 +19,8 @@
  #include <openssl/md5.h>
  #include <openssl/sha.h>
  #include <openssl/hmac.h>
---- xrdp-0.9.1/common/ssl_calls.c~	2016-12-27 19:17:10.000000000 +0000
-+++ xrdp-0.9.1/common/ssl_calls.c	2016-12-27 19:22:27.914245358 +0000
-@@ -87,7 +87,7 @@
- void *APP_CC
+@@ -88,7 +87,7 @@ ssl_finish(void)
+ void *
  ssl_rc4_info_create(void)
  {
 -    return g_malloc(sizeof(RC4_KEY), 1);
@@ -19,20 +28,21 @@
  }
  
  /*****************************************************************************/
-@@ -101,14 +101,14 @@
- void APP_CC
+@@ -102,14 +101,12 @@ ssl_rc4_info_delete(void *rc4_info)
+ void
  ssl_rc4_set_key(void *rc4_info, char *key, int len)
  {
 -    RC4_set_key((RC4_KEY *)rc4_info, len, (tui8 *)key);
-+    
  }
  
  /*****************************************************************************/
- void APP_CC
+ void
  ssl_rc4_crypt(void *rc4_info, char *data, int len)
  {
 -    RC4((RC4_KEY *)rc4_info, len, (tui8 *)data, (tui8 *)data);
-+    
  }
  
  /* sha1 stuff */
+-- 
+2.12.2
+
