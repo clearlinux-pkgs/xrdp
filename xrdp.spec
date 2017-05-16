@@ -4,7 +4,7 @@
 #
 Name     : xrdp
 Version  : 0.9.2
-Release  : 4
+Release  : 5
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.2/xrdp-0.9.2.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.2/xrdp-0.9.2.tar.gz
 Summary  : Library for manipulating memory bitmaps.
