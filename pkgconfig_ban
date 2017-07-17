@@ -1,3 +1,7 @@
 # This file contains pkgconfig build requirements that get picked up
 # but are undesirable. One entry per line, no whitespace.
 freerdp
+1.0.0
+0.9.8
+2.6
+0.1.0
