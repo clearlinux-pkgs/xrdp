@@ -4,7 +4,7 @@
 #
 Name     : xrdp
 Version  : 0.9.3.1
-Release  : 9
+Release  : 10
 URL      : https://github.com/neutrinolabs/xrdp/archive/v0.9.3.1.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/archive/v0.9.3.1.tar.gz
 Summary  : An open source Remote Desktop Protocol (RDP) server
@@ -98,7 +98,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1502866156
+export SOURCE_DATE_EPOCH=1506365350
 %reconfigure --disable-static --sysconfdir=/usr/share/defaults/xrdp \
 --disable-painter \
 --disable-rfxcodec
@@ -112,7 +112,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1502866156
+export SOURCE_DATE_EPOCH=1506365350
 rm -rf %{buildroot}
 %make_install
 
