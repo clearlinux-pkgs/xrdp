@@ -4,7 +4,7 @@
 #
 Name     : xrdp
 Version  : 0.9.4
-Release  : 12
+Release  : 13
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.4/xrdp-0.9.4.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.4/xrdp-0.9.4.tar.gz
 Summary  : An open source Remote Desktop Protocol (RDP) server
