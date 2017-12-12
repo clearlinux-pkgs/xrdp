@@ -4,7 +4,7 @@
 #
 Name     : xrdp
 Version  : 0.9.4
-Release  : 11
+Release  : 12
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.4/xrdp-0.9.4.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.4/xrdp-0.9.4.tar.gz
 Summary  : An open source Remote Desktop Protocol (RDP) server
@@ -27,6 +27,7 @@ BuildRequires : pkgconfig(sm)
 BuildRequires : pkgconfig(systemd)
 BuildRequires : pkgconfig(x11)
 Patch1: 0001-Remove-RC4-support-for-OpenSSL.patch
+Patch2: cve-2017-16927.patch
 
 %description
 
@@ -81,7 +82,6 @@ doc components for the xrdp package.
 Summary: lib components for the xrdp package.
 Group: Libraries
 Requires: xrdp-data
-Requires: xrdp-config
 
 %description lib
 lib components for the xrdp package.
@@ -90,13 +90,18 @@ lib components for the xrdp package.
 %prep
 %setup -q -n xrdp-0.9.4
 %patch1 -p1
+%patch2 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1506612418
+export SOURCE_DATE_EPOCH=1513097251
+export CFLAGS="$CFLAGS -fstack-protector-strong "
+export FCFLAGS="$CFLAGS -fstack-protector-strong "
+export FFLAGS="$CFLAGS -fstack-protector-strong "
+export CXXFLAGS="$CXXFLAGS -fstack-protector-strong "
 %configure --disable-static --sysconfdir=/usr/share/defaults/xrdp \
 --disable-painter \
 --disable-rfxcodec
@@ -110,7 +115,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1506612418
+export SOURCE_DATE_EPOCH=1513097251
 rm -rf %{buildroot}
 %make_install
 
