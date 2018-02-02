@@ -6,7 +6,7 @@
 #
 Name     : xrdp
 Version  : 0.9.5
-Release  : 14
+Release  : 15
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.5/xrdp-0.9.5.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.5/xrdp-0.9.5.tar.gz
 Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.5/xrdp-0.9.5.tar.gz.asc
