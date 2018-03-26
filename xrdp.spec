@@ -5,11 +5,11 @@
 # Source0 file verified with key 0x9F72CDBC01BF10EB (meta@vmeta.jp)
 #
 Name     : xrdp
-Version  : 0.9.5
-Release  : 15
-URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.5/xrdp-0.9.5.tar.gz
-Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.5/xrdp-0.9.5.tar.gz
-Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.5/xrdp-0.9.5.tar.gz.asc
+Version  : 0.9.6
+Release  : 16
+URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz
+Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz
+Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz.asc
 Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
@@ -29,6 +29,7 @@ BuildRequires : pkgconfig(pixman-1)
 BuildRequires : pkgconfig(sm)
 BuildRequires : pkgconfig(systemd)
 BuildRequires : pkgconfig(x11)
+BuildRequires : qtbase-dev
 Patch1: 0001-Remove-RC4-support-for-OpenSSL.patch
 
 %description
@@ -90,7 +91,7 @@ lib components for the xrdp package.
 
 
 %prep
-%setup -q -n xrdp-0.9.5
+%setup -q -n xrdp-0.9.6
 %patch1 -p1
 
 %build
@@ -98,11 +99,11 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1514391733
-export CFLAGS="$CFLAGS -fstack-protector-strong "
-export FCFLAGS="$CFLAGS -fstack-protector-strong "
-export FFLAGS="$CFLAGS -fstack-protector-strong "
-export CXXFLAGS="$CXXFLAGS -fstack-protector-strong "
+export SOURCE_DATE_EPOCH=1522107054
+export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs "
+export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs "
+export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs "
+export CXXFLAGS="$CXXFLAGS -fstack-protector-strong -mzero-caller-saved-regs "
 %configure --disable-static --sysconfdir=/usr/share/defaults/xrdp \
 --disable-painter \
 --disable-rfxcodec
@@ -116,7 +117,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1514391733
+export SOURCE_DATE_EPOCH=1522107054
 rm -rf %{buildroot}
 %make_install
 
