@@ -6,7 +6,7 @@
 #
 Name     : xrdp
 Version  : 0.9.6
-Release  : 17
+Release  : 18
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz
 Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz.asc
@@ -99,11 +99,11 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1522107054
-export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs "
-export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs "
-export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs "
-export CXXFLAGS="$CXXFLAGS -fstack-protector-strong -mzero-caller-saved-regs "
+export SOURCE_DATE_EPOCH=1526025761
+export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
+export CXXFLAGS="$CXXFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 %configure --disable-static --sysconfdir=/usr/share/defaults/xrdp \
 --disable-painter \
 --disable-rfxcodec
@@ -117,7 +117,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1522107054
+export SOURCE_DATE_EPOCH=1526025761
 rm -rf %{buildroot}
 %make_install
 
