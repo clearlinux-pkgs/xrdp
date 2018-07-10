@@ -7,7 +7,7 @@
 %define keepstatic 1
 Name     : xrdp
 Version  : 0.9.7
-Release  : 24
+Release  : 25
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.7/xrdp-0.9.7.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.7/xrdp-0.9.7.tar.gz
 Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.7/xrdp-0.9.7.tar.gz.asc
@@ -121,7 +121,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1531259514
+export SOURCE_DATE_EPOCH=1531259750
 export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
@@ -141,7 +141,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1531259514
+export SOURCE_DATE_EPOCH=1531259750
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/doc/xrdp
 cp COPYING %{buildroot}/usr/share/doc/xrdp/COPYING
@@ -153,13 +153,13 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 
 %files
 %defattr(-,root,root,-)
-/usr/lib64/xrdp/libcommon.a
-/usr/lib64/xrdp/libmc.a
-/usr/lib64/xrdp/libscp.a
-/usr/lib64/xrdp/libvnc.a
-/usr/lib64/xrdp/libxrdp.a
-/usr/lib64/xrdp/libxrdpapi.a
-/usr/lib64/xrdp/libxup.a
+%exclude /usr/lib64/xrdp/libcommon.a
+%exclude /usr/lib64/xrdp/libmc.a
+%exclude /usr/lib64/xrdp/libscp.a
+%exclude /usr/lib64/xrdp/libvnc.a
+%exclude /usr/lib64/xrdp/libxrdp.a
+%exclude /usr/lib64/xrdp/libxrdpapi.a
+%exclude /usr/lib64/xrdp/libxup.a
 
 %files bin
 %defattr(-,root,root,-)
