@@ -8,15 +8,15 @@ diff -purN xrdp-0.9.6.org/common/os_calls.c xrdp-0.9.6/common/os_calls.c
 +
 +void g_snprintf_config(char *dest, int size, const char *fmt, const char *path)
 +{
-+	g_snprintf_config(dest, size, fmt, path);
++	g_snprintf(dest, size, fmt, path);
 +	if (access(dest, R_OK) == 0)
 +		return;
 +
-+	g_snprintf_config(dest, size, fmt, "/usr/share/defaults/xrdp");
++	g_snprintf(dest, size, fmt, "/usr/share/defaults/xrdp");
 +	if (access(dest, R_OK) == 0)
 +		return;
 +
-+	g_snprintf_config(dest, size, fmt, path);
++	g_snprintf(dest, size, fmt, path);
 +
 +}
 \ No newline at end of file
