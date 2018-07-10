@@ -112,18 +112,6 @@ diff -purN xrdp-0.9.6.org/sesman/sesman.c xrdp-0.9.6/sesman/sesman.c
  
      /* starting logging subsystem */
      log_error = log_start(cfg_file, "xrdp-sesman");
-diff -purN xrdp-0.9.6.org/sesman/session.c xrdp-0.9.6/sesman/session.c
---- xrdp-0.9.6.org/sesman/session.c	2018-03-26 04:29:21.000000000 +0000
-+++ xrdp-0.9.6/sesman/session.c	2018-07-10 02:15:30.989732509 +0000
-@@ -877,7 +877,7 @@ session_reconnect_fork(int display, char
-                      display,
-                      g_cfg->env_names,
-                      g_cfg->env_values);
--        g_snprintf(text, 255, "%s/%s", XRDP_CFG_PATH, "reconnectwm.sh");
-+        g_snprintf_config(text, 255, "%s/reconnectwm.sh", XRDP_CFG_PATH);
- 
-         if (g_file_exist(text))
-         {
 diff -purN xrdp-0.9.6.org/sesman/sig.c xrdp-0.9.6/sesman/sig.c
 --- xrdp-0.9.6.org/sesman/sig.c	2018-01-31 06:35:08.000000000 +0000
 +++ xrdp-0.9.6/sesman/sig.c	2018-07-10 02:15:46.732732289 +0000

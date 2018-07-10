@@ -4,12 +4,13 @@
 #
 # Source0 file verified with key 0x9F72CDBC01BF10EB (meta@vmeta.jp)
 #
+%define keepstatic 1
 Name     : xrdp
-Version  : 0.9.6
-Release  : 23
-URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz
-Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz
-Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz.asc
+Version  : 0.9.7
+Release  : 24
+URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.7/xrdp-0.9.7.tar.gz
+Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.7/xrdp-0.9.7.tar.gz
+Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.7/xrdp-0.9.7.tar.gz.asc
 Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
@@ -21,9 +22,13 @@ Requires: xrdp-license
 Requires: xrdp-man
 BuildRequires : FreeRDP-dev
 BuildRequires : Linux-PAM-dev
+BuildRequires : e2fsprogs-dev
+BuildRequires : krb5-dev
 BuildRequires : libXfixes-dev
 BuildRequires : libXrandr-dev
 BuildRequires : libjpeg-turbo-dev
+BuildRequires : nasm
+BuildRequires : nasm-bin
 BuildRequires : pkgconfig(fuse)
 BuildRequires : pkgconfig(ice)
 BuildRequires : pkgconfig(openssl)
@@ -33,6 +38,7 @@ BuildRequires : pkgconfig(systemd)
 BuildRequires : pkgconfig(x11)
 BuildRequires : qtbase-dev
 BuildRequires : qtbase-extras
+BuildRequires : yasm
 Patch1: 0001-Remove-RC4-support-for-OpenSSL.patch
 Patch2: stateless.patch
 
@@ -106,7 +112,7 @@ man components for the xrdp package.
 
 
 %prep
-%setup -q -n xrdp-0.9.6
+%setup -q -n xrdp-0.9.7
 %patch1 -p1
 %patch2 -p1
 
@@ -115,15 +121,16 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1531257331
+export SOURCE_DATE_EPOCH=1531259514
 export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export CXXFLAGS="$CXXFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
-%configure --disable-static --disable-painter \
---disable-rfxcodec \
---enable-pixman \
---enable-jpeg
+%configure  --enable-pixman \
+--enable-jpeg \
+--enable-fuse \
+--enable-kerberos \
+--enable-vsock
 make  %{?_smp_mflags}
 
 %check
@@ -134,7 +141,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1531257331
+export SOURCE_DATE_EPOCH=1531259514
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/doc/xrdp
 cp COPYING %{buildroot}/usr/share/doc/xrdp/COPYING
@@ -142,11 +149,17 @@ cp COPYING %{buildroot}/usr/share/doc/xrdp/COPYING
 ## make_install_append content
 mkdir -p %{buildroot}/usr/share/defaults
 mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
-mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
 ## make_install_append end
 
 %files
 %defattr(-,root,root,-)
+/usr/lib64/xrdp/libcommon.a
+/usr/lib64/xrdp/libmc.a
+/usr/lib64/xrdp/libscp.a
+/usr/lib64/xrdp/libvnc.a
+/usr/lib64/xrdp/libxrdp.a
+/usr/lib64/xrdp/libxrdpapi.a
+/usr/lib64/xrdp/libxup.a
 
 %files bin
 %defattr(-,root,root,-)
@@ -196,7 +209,6 @@ mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
 /usr/share/defaults/xrdp/xrdp.ini
 /usr/share/defaults/xrdp/xrdp.sh
 /usr/share/defaults/xrdp/xrdp_keyboard.ini
-/usr/share/pam.d/xrdp-sesman
 /usr/share/xrdp/ad24b.bmp
 /usr/share/xrdp/ad256.bmp
 /usr/share/xrdp/cursor0.cur
@@ -209,10 +221,19 @@ mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
 %files dev
 %defattr(-,root,root,-)
 /usr/include/*.h
+/usr/lib64/*.a
+/usr/lib64/libpainter.so
+/usr/lib64/librfxencode.so
+/usr/lib64/pkgconfig/libpainter.pc
+/usr/lib64/pkgconfig/rfxcodec.pc
 /usr/lib64/pkgconfig/xrdp.pc
 
 %files lib
 %defattr(-,root,root,-)
+/usr/lib64/libpainter.so.0
+/usr/lib64/libpainter.so.0.0.0
+/usr/lib64/librfxencode.so.0
+/usr/lib64/librfxencode.so.0.0.0
 /usr/lib64/xrdp/libcommon.so
 /usr/lib64/xrdp/libcommon.so.0
 /usr/lib64/xrdp/libcommon.so.0.0.0

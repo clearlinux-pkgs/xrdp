@@ -6,3 +6,10 @@
 /usr/share/xrdp/key.pem
 /usr/share/defaults/xrdp/cert.pem
 /usr/share/defaults/xrdp/key.pem
+/usr/lib64/xrdp/libcommon.a
+/usr/lib64/xrdp/libmc.a
+/usr/lib64/xrdp/libscp.a
+/usr/lib64/xrdp/libvnc.a
+/usr/lib64/xrdp/libxrdp.a
+/usr/lib64/xrdp/libxrdpapi.a
+/usr/lib64/xrdp/libxup.a

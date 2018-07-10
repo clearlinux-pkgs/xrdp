@@ -4,3 +4,4 @@ FreeRDP-dev
 Linux-PAM-dev
 libXfixes-dev
 libXrandr-dev
+krb5-dev

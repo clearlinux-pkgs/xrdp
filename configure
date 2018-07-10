@@ -1,4 +1,5 @@
---disable-painter
---disable-rfxcodec
 --enable-pixman
 --enable-jpeg
+--enable-fuse 
+--enable-kerberos 
+--enable-vsock
