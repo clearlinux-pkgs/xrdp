@@ -6,7 +6,7 @@
 #
 Name     : xrdp
 Version  : 0.9.6
-Release  : 20
+Release  : 21
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz
 Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz.asc
@@ -114,7 +114,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1531189450
+export SOURCE_DATE_EPOCH=1531189684
 export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
@@ -132,7 +132,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1531189450
+export SOURCE_DATE_EPOCH=1531189684
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/doc/xrdp
 cp COPYING %{buildroot}/usr/share/doc/xrdp/COPYING
@@ -140,6 +140,7 @@ cp COPYING %{buildroot}/usr/share/doc/xrdp/COPYING
 ## make_install_append content
 mkdir -p %{buildroot}/usr/share/defaults
 mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
+mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
 ## make_install_append end
 
 %files
@@ -163,9 +164,8 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 
 %files data
 %defattr(-,root,root,-)
-/usr/share/defaults/pam.d/xrdp-sesman
-/usr/share/defaults/xrdp/cert.pem
-/usr/share/defaults/xrdp/key.pem
+%exclude /usr/share/defaults/xrdp/cert.pem
+%exclude /usr/share/defaults/xrdp/key.pem
 /usr/share/defaults/xrdp/km-00000407.ini
 /usr/share/defaults/xrdp/km-00000409.ini
 /usr/share/defaults/xrdp/km-0000040a.ini
@@ -194,6 +194,7 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 /usr/share/defaults/xrdp/xrdp.ini
 /usr/share/defaults/xrdp/xrdp.sh
 /usr/share/defaults/xrdp/xrdp_keyboard.ini
+/usr/share/pam.d/xrdp-sesman
 /usr/share/xrdp/ad24b.bmp
 /usr/share/xrdp/ad256.bmp
 /usr/share/xrdp/cursor0.cur
