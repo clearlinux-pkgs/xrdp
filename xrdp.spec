@@ -6,7 +6,7 @@
 #
 Name     : xrdp
 Version  : 0.9.6
-Release  : 22
+Release  : 23
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz
 Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.6/xrdp-0.9.6.tar.gz.asc
@@ -23,6 +23,7 @@ BuildRequires : FreeRDP-dev
 BuildRequires : Linux-PAM-dev
 BuildRequires : libXfixes-dev
 BuildRequires : libXrandr-dev
+BuildRequires : libjpeg-turbo-dev
 BuildRequires : pkgconfig(fuse)
 BuildRequires : pkgconfig(ice)
 BuildRequires : pkgconfig(openssl)
@@ -114,14 +115,15 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1531256873
+export SOURCE_DATE_EPOCH=1531257331
 export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export CXXFLAGS="$CXXFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
-%configure --disable-static --sysconfdir=/usr/share/defaults/xrdp \
---disable-painter \
---disable-rfxcodec
+%configure --disable-static --disable-painter \
+--disable-rfxcodec \
+--enable-pixman \
+--enable-jpeg
 make  %{?_smp_mflags}
 
 %check
@@ -132,7 +134,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1531256873
+export SOURCE_DATE_EPOCH=1531257331
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/doc/xrdp
 cp COPYING %{buildroot}/usr/share/doc/xrdp/COPYING

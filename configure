@@ -1,3 +1,4 @@
---sysconfdir=/usr/share/defaults/xrdp
 --disable-painter
 --disable-rfxcodec
+--enable-pixman
+--enable-jpeg
