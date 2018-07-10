@@ -1,0 +1,2 @@
+mkdir -p %{buildroot}/usr/share/defaults
+mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/

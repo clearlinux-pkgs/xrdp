@@ -1,0 +1,246 @@
+diff -purN xrdp-0.9.6.org/common/os_calls.c xrdp-0.9.6/common/os_calls.c
+--- xrdp-0.9.6.org/common/os_calls.c	2018-03-26 04:28:01.000000000 +0000
++++ xrdp-0.9.6/common/os_calls.c	2018-07-10 02:12:29.339735038 +0000
+@@ -3823,3 +3823,17 @@ g_mirror_memcpy(void *dst, const void *s
+     return 0;
+ }
+ 
++
++void g_snprintf_config(char *dest, int size, const char *fmt, const char *path)
++{
++	g_snprintf_config(dest, size, fmt, path);
++	if (access(dest, R_OK) == 0)
++		return;
++
++	g_snprintf_config(dest, size, fmt, "/usr/share/defaults/xrdp");
++	if (access(dest, R_OK) == 0)
++		return;
++
++	g_snprintf_config(dest, size, fmt, path);
++
++}
+\ No newline at end of file
+diff -purN xrdp-0.9.6.org/common/os_calls.h xrdp-0.9.6/common/os_calls.h
+--- xrdp-0.9.6.org/common/os_calls.h	2018-03-26 04:28:01.000000000 +0000
++++ xrdp-0.9.6/common/os_calls.h	2018-07-10 02:12:19.428735176 +0000
+@@ -183,6 +183,7 @@ void *   g_shmat(int shmid);
+ int      g_shmdt(const void *shmaddr);
+ int      g_gethostname(char *name, int len);
+ int      g_mirror_memcpy(void *dst, const void *src, int len);
++void	 g_snprintf_config(char *dest, int size, const char *fmt, const char * path);
+ 
+ /* glib-style wrappers */
+ #define g_new(struct_type, n_structs) \
+diff -purN xrdp-0.9.6.org/libxrdp/xrdp_rdp.c xrdp-0.9.6/libxrdp/xrdp_rdp.c
+--- xrdp-0.9.6.org/libxrdp/xrdp_rdp.c	2018-01-09 01:39:04.000000000 +0000
++++ xrdp-0.9.6/libxrdp/xrdp_rdp.c	2018-07-10 02:13:26.739734238 +0000
+@@ -60,7 +60,7 @@ xrdp_rdp_read_config(struct xrdp_client_
+     items->auto_free = 1;
+     values = list_create();
+     values->auto_free = 1;
+-    g_snprintf(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
+     DEBUG(("cfg_file %s", cfg_file));
+     file_by_name_read_section(cfg_file, "globals", items, values);
+ 
+diff -purN xrdp-0.9.6.org/libxrdp/xrdp_sec.c xrdp-0.9.6/libxrdp/xrdp_sec.c
+--- xrdp-0.9.6.org/libxrdp/xrdp_sec.c	2018-03-26 04:29:21.000000000 +0000
++++ xrdp-0.9.6/libxrdp/xrdp_sec.c	2018-07-10 02:13:51.260733897 +0000
+@@ -260,7 +260,7 @@ xrdp_load_keyboard_layout(struct xrdp_cl
+         client_info->keyboard_subtype = 1;
+     }
+ 
+-    g_snprintf(keyboard_cfg_file, 255, "%s/xrdp_keyboard.ini", XRDP_CFG_PATH);
++    g_snprintf_config(keyboard_cfg_file, 255, "%s/xrdp_keyboard.ini", XRDP_CFG_PATH);
+     LLOGLN(10, ("keyboard_cfg_file %s", keyboard_cfg_file));
+ 
+     fd = g_file_open(keyboard_cfg_file);
+@@ -2299,7 +2299,7 @@ xrdp_sec_incoming(struct xrdp_sec *self)
+             items->auto_free = 1;
+             values = list_create();
+             values->auto_free = 1;
+-            g_snprintf(key_file, 255, "%s/rsakeys.ini", XRDP_CFG_PATH);
++            g_snprintf_config(key_file, 255, "%s/rsakeys.ini", XRDP_CFG_PATH);
+ 
+             if (file_by_name_read_section(key_file, "keys", items, values) != 0)
+             {
+diff -purN xrdp-0.9.6.org/sesman/chansrv/chansrv.c xrdp-0.9.6/sesman/chansrv/chansrv.c
+--- xrdp-0.9.6.org/sesman/chansrv/chansrv.c	2018-03-26 04:28:01.000000000 +0000
++++ xrdp-0.9.6/sesman/chansrv/chansrv.c	2018-07-10 02:14:42.807733179 +0000
+@@ -1366,7 +1366,7 @@ read_ini(void)
+     values = list_create();
+     values->auto_free = 1;
+     g_use_unix_socket = 0;
+-    g_snprintf(filename, 255, "%s/sesman.ini", XRDP_CFG_PATH);
++    g_snprintf_config(filename, 255, "%s/sesman.ini", XRDP_CFG_PATH);
+ 
+     if (file_by_name_read_section(filename, "Globals", names, values) == 0)
+     {
+diff -purN xrdp-0.9.6.org/sesman/chansrv/chansrv_fuse.c xrdp-0.9.6/sesman/chansrv/chansrv_fuse.c
+--- xrdp-0.9.6.org/sesman/chansrv/chansrv_fuse.c	2018-03-26 04:28:01.000000000 +0000
++++ xrdp-0.9.6/sesman/chansrv/chansrv_fuse.c	2018-07-10 02:14:33.042733315 +0000
+@@ -379,7 +379,7 @@ load_fuse_config(void)
+     items->auto_free = 1;
+     values = list_create();
+     values->auto_free = 1;
+-    g_snprintf(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
+     file_by_name_read_section(cfg_file, "Chansrv", items, values);
+     for (index = 0; index < items->count; index++)
+     {
+diff -purN xrdp-0.9.6.org/sesman/config.c xrdp-0.9.6/sesman/config.c
+--- xrdp-0.9.6.org/sesman/config.c	2018-03-26 04:29:21.000000000 +0000
++++ xrdp-0.9.6/sesman/config.c	2018-07-10 02:14:05.006733706 +0000
+@@ -48,7 +48,7 @@ config_read(struct config_sesman *cfg)
+     struct list *param_v;
+     char cfg_file[256];
+ 
+-    g_snprintf(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
+     fd = g_file_open(cfg_file);
+ 
+     if (-1 == fd)
+diff -purN xrdp-0.9.6.org/sesman/sesman.c xrdp-0.9.6/sesman/sesman.c
+--- xrdp-0.9.6.org/sesman/sesman.c	2018-03-26 04:29:21.000000000 +0000
++++ xrdp-0.9.6/sesman/sesman.c	2018-07-10 02:14:15.720733556 +0000
+@@ -312,7 +312,7 @@ main(int argc, char **argv)
+         g_exit(1);
+     }
+ 
+-    g_snprintf(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
+ 
+     /* starting logging subsystem */
+     log_error = log_start(cfg_file, "xrdp-sesman");
+diff -purN xrdp-0.9.6.org/sesman/session.c xrdp-0.9.6/sesman/session.c
+--- xrdp-0.9.6.org/sesman/session.c	2018-03-26 04:29:21.000000000 +0000
++++ xrdp-0.9.6/sesman/session.c	2018-07-10 02:15:30.989732509 +0000
+@@ -877,7 +877,7 @@ session_reconnect_fork(int display, char
+                      display,
+                      g_cfg->env_names,
+                      g_cfg->env_values);
+-        g_snprintf(text, 255, "%s/%s", XRDP_CFG_PATH, "reconnectwm.sh");
++        g_snprintf_config(text, 255, "%s/reconnectwm.sh", XRDP_CFG_PATH);
+ 
+         if (g_file_exist(text))
+         {
+diff -purN xrdp-0.9.6.org/sesman/sig.c xrdp-0.9.6/sesman/sig.c
+--- xrdp-0.9.6.org/sesman/sig.c	2018-01-31 06:35:08.000000000 +0000
++++ xrdp-0.9.6/sesman/sig.c	2018-07-10 02:15:46.732732289 +0000
+@@ -101,7 +101,7 @@ sig_sesman_reload_cfg(int sig)
+     /* replace old config with newly read one */
+     g_cfg = cfg;
+ 
+-    g_snprintf(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
+ 
+     /* start again logging subsystem */
+     error = log_start(cfg_file, "xrdp-sesman");
+diff -purN xrdp-0.9.6.org/xrdp/lang.c xrdp-0.9.6/xrdp/lang.c
+--- xrdp-0.9.6.org/xrdp/lang.c	2018-01-09 01:39:04.000000000 +0000
++++ xrdp-0.9.6/xrdp/lang.c	2018-07-10 02:17:07.364731167 +0000
+@@ -251,7 +251,7 @@ get_keymaps(int keylayout, struct xrdp_k
+     if (!g_file_exist(filename))
+     {
+         log_message(LOG_LEVEL_INFO, "Cannot find keymap file %s", filename);
+-        g_snprintf(filename, 255, "%s/km-00000409.ini", XRDP_CFG_PATH);
++        g_snprintf_config(filename, 255, "%s/km-00000409.ini", XRDP_CFG_PATH);
+     }
+ 
+     if (g_file_exist(filename))
+diff -purN xrdp-0.9.6.org/xrdp/xrdp.c xrdp-0.9.6/xrdp/xrdp.c
+--- xrdp-0.9.6.org/xrdp/xrdp.c	2018-03-26 04:29:21.000000000 +0000
++++ xrdp-0.9.6/xrdp/xrdp.c	2018-07-10 02:16:40.791731537 +0000
+@@ -353,7 +353,7 @@ xrdp_sanity_check(void)
+         return 1;
+     }
+ 
+-    g_snprintf(key_file, 255, "%s/rsakeys.ini", XRDP_CFG_PATH);
++    g_snprintf_config(key_file, 255, "%s/rsakeys.ini", XRDP_CFG_PATH);
+     if (!g_file_exist(key_file))
+     {
+         g_writeln("File %s is missing, create it using xrdp-keygen", key_file);
+@@ -386,7 +386,7 @@ main(int argc, char **argv)
+         DEBUG(("Argument %i - %s", test, argv[test]));
+     }
+ 
+-    g_snprintf(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
+ 
+     startup_params = (struct xrdp_startup_params *)
+                      g_malloc(sizeof(struct xrdp_startup_params), 1);
+diff -purN xrdp-0.9.6.org/xrdp/xrdp_listen.c xrdp-0.9.6/xrdp/xrdp_listen.c
+--- xrdp-0.9.6.org/xrdp/xrdp_listen.c	2018-03-26 04:28:01.000000000 +0000
++++ xrdp-0.9.6/xrdp/xrdp_listen.c	2018-07-10 02:17:59.544730440 +0000
+@@ -169,7 +169,7 @@ xrdp_listen_get_port_address(char *port,
+     /* Default to all */
+     g_strncpy(address, "0.0.0.0", address_bytes - 1);
+     /* see if port or address is in xrdp.ini file */
+-    g_snprintf(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
+     fd = g_file_open(cfg_file);
+     *mode = TRANS_MODE_TCP;
+     *tcp_nodelay = 0 ;
+diff -purN xrdp-0.9.6.org/xrdp/xrdp_login_wnd.c xrdp-0.9.6/xrdp/xrdp_login_wnd.c
+--- xrdp-0.9.6.org/xrdp/xrdp_login_wnd.c	2018-03-26 04:28:01.000000000 +0000
++++ xrdp-0.9.6/xrdp/xrdp_login_wnd.c	2018-07-10 02:16:20.589731818 +0000
+@@ -568,7 +568,7 @@ xrdp_wm_login_fill_in_combo(struct xrdp_
+     section_names->auto_free = 1;
+     section_values = list_create();
+     section_values->auto_free = 1;
+-    g_snprintf(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
+     fd = g_file_open(cfg_file); /* xrdp.ini */
+ 
+     if (fd < 0)
+@@ -873,7 +873,7 @@ load_xrdp_config(struct xrdp_config *con
+     globals->ls_btn_cancel_height = 30;
+ 
+     /* open xrdp.ini file */
+-    g_snprintf(buf, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
++    g_snprintf_config(buf, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
+     if ((fd = g_file_open(buf)) < 0)
+     {
+         log_message(LOG_LEVEL_ERROR,"load_config: Could not read "
+diff -purN xrdp-0.9.6.org/xrdp/xrdp_mm.c xrdp-0.9.6/xrdp/xrdp_mm.c
+--- xrdp-0.9.6.org/xrdp/xrdp_mm.c	2018-03-26 04:29:21.000000000 +0000
++++ xrdp-0.9.6/xrdp/xrdp_mm.c	2018-07-10 02:17:46.079730628 +0000
+@@ -1307,7 +1307,7 @@ xrdp_mm_get_sesman_port(char *port, int
+     /* default to port 3350 */
+     g_strncpy(port, "3350", port_bytes - 1);
+     /* see if port is in sesman.ini file */
+-    g_snprintf(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/sesman.ini", XRDP_CFG_PATH);
+     fd = g_file_open(cfg_file);
+ 
+     if (fd >= 0)
+@@ -2983,7 +2983,7 @@ int read_allowed_channel_names(struct li
+     int ret = 0;
+     char cfg_file[256];
+ 
+-    g_snprintf(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
+     fd = g_file_open(cfg_file);
+ 
+     if (fd != -1)
+diff -purN xrdp-0.9.6.org/xrdp/xrdp_wm.c xrdp-0.9.6/xrdp/xrdp_wm.c
+--- xrdp-0.9.6.org/xrdp/xrdp_wm.c	2018-03-26 04:29:21.000000000 +0000
++++ xrdp-0.9.6/xrdp/xrdp_wm.c	2018-07-10 02:17:28.101730878 +0000
+@@ -402,7 +402,7 @@ xrdp_wm_load_static_colors_plus(struct x
+     self->background = HCOLOR(self->screen->bpp, 0x000000);
+ 
+     /* now load them from the globals in xrdp.ini if defined */
+-    g_snprintf(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
++    g_snprintf_config(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
+     fd = g_file_open(cfg_file);
+ 
+     if (fd >= 0)
+@@ -573,7 +573,7 @@ xrdp_wm_init(struct xrdp_wm *self)
+          * NOTE: this should eventually be accessed from self->xrdp_config
+          */
+ 
+-        g_snprintf(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
++        g_snprintf_config(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
+         fd = g_file_open(cfg_file); /* xrdp.ini */
+         if (fd != -1)
+         {
