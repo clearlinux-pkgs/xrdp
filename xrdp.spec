@@ -6,11 +6,11 @@
 #
 %define keepstatic 1
 Name     : xrdp
-Version  : 0.9.7
-Release  : 25
-URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.7/xrdp-0.9.7.tar.gz
-Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.7/xrdp-0.9.7.tar.gz
-Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.7/xrdp-0.9.7.tar.gz.asc
+Version  : 0.9.8
+Release  : 26
+URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.8/xrdp-0.9.8.tar.gz
+Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.8/xrdp-0.9.8.tar.gz
+Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.8/xrdp-0.9.8.tar.gz.asc
 Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
@@ -22,6 +22,7 @@ Requires: xrdp-license
 Requires: xrdp-man
 BuildRequires : FreeRDP-dev
 BuildRequires : Linux-PAM-dev
+BuildRequires : buildreq-qmake
 BuildRequires : e2fsprogs-dev
 BuildRequires : krb5-dev
 BuildRequires : libXfixes-dev
@@ -36,8 +37,6 @@ BuildRequires : pkgconfig(pixman-1)
 BuildRequires : pkgconfig(sm)
 BuildRequires : pkgconfig(systemd)
 BuildRequires : pkgconfig(x11)
-BuildRequires : qtbase-dev
-BuildRequires : qtbase-extras
 BuildRequires : yasm
 Patch1: 0001-Remove-RC4-support-for-OpenSSL.patch
 Patch2: stateless.patch
@@ -48,10 +47,10 @@ Patch2: stateless.patch
 %package bin
 Summary: bin components for the xrdp package.
 Group: Binaries
-Requires: xrdp-data
-Requires: xrdp-config
-Requires: xrdp-license
-Requires: xrdp-man
+Requires: xrdp-data = %{version}-%{release}
+Requires: xrdp-config = %{version}-%{release}
+Requires: xrdp-license = %{version}-%{release}
+Requires: xrdp-man = %{version}-%{release}
 
 %description bin
 bin components for the xrdp package.
@@ -76,10 +75,10 @@ data components for the xrdp package.
 %package dev
 Summary: dev components for the xrdp package.
 Group: Development
-Requires: xrdp-lib
-Requires: xrdp-bin
-Requires: xrdp-data
-Provides: xrdp-devel
+Requires: xrdp-lib = %{version}-%{release}
+Requires: xrdp-bin = %{version}-%{release}
+Requires: xrdp-data = %{version}-%{release}
+Provides: xrdp-devel = %{version}-%{release}
 
 %description dev
 dev components for the xrdp package.
@@ -88,8 +87,8 @@ dev components for the xrdp package.
 %package lib
 Summary: lib components for the xrdp package.
 Group: Libraries
-Requires: xrdp-data
-Requires: xrdp-license
+Requires: xrdp-data = %{version}-%{release}
+Requires: xrdp-license = %{version}-%{release}
 
 %description lib
 lib components for the xrdp package.
@@ -112,7 +111,7 @@ man components for the xrdp package.
 
 
 %prep
-%setup -q -n xrdp-0.9.7
+%setup -q -n xrdp-0.9.8
 %patch1 -p1
 %patch2 -p1
 
@@ -121,7 +120,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1531259750
+export SOURCE_DATE_EPOCH=1537931404
 export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
@@ -141,15 +140,15 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1531259750
+export SOURCE_DATE_EPOCH=1537931404
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/doc/xrdp
 cp COPYING %{buildroot}/usr/share/doc/xrdp/COPYING
 %make_install
-## make_install_append content
+## install_append content
 mkdir -p %{buildroot}/usr/share/defaults
 mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
-## make_install_append end
+## install_append end
 
 %files
 %defattr(-,root,root,-)
@@ -251,7 +250,7 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 /usr/lib64/xrdp/libxup.so
 
 %files license
-%defattr(-,root,root,-)
+%defattr(0644,root,root,0755)
 /usr/share/doc/xrdp/COPYING
 
 %files man
