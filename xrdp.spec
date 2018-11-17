@@ -7,19 +7,19 @@
 %define keepstatic 1
 Name     : xrdp
 Version  : 0.9.8
-Release  : 27
+Release  : 28
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.8/xrdp-0.9.8.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.8/xrdp-0.9.8.tar.gz
 Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.8/xrdp-0.9.8.tar.gz.asc
 Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
-Requires: xrdp-bin
-Requires: xrdp-config
-Requires: xrdp-lib
-Requires: xrdp-data
-Requires: xrdp-license
-Requires: xrdp-man
+Requires: xrdp-bin = %{version}-%{release}
+Requires: xrdp-data = %{version}-%{release}
+Requires: xrdp-lib = %{version}-%{release}
+Requires: xrdp-license = %{version}-%{release}
+Requires: xrdp-man = %{version}-%{release}
+Requires: xrdp-services = %{version}-%{release}
 BuildRequires : FreeRDP-dev
 BuildRequires : Linux-PAM-dev
 BuildRequires : buildreq-qmake
@@ -48,20 +48,12 @@ Patch2: stateless.patch
 Summary: bin components for the xrdp package.
 Group: Binaries
 Requires: xrdp-data = %{version}-%{release}
-Requires: xrdp-config = %{version}-%{release}
 Requires: xrdp-license = %{version}-%{release}
 Requires: xrdp-man = %{version}-%{release}
+Requires: xrdp-services = %{version}-%{release}
 
 %description bin
 bin components for the xrdp package.
-
-
-%package config
-Summary: config components for the xrdp package.
-Group: Default
-
-%description config
-config components for the xrdp package.
 
 
 %package data
@@ -110,6 +102,14 @@ Group: Default
 man components for the xrdp package.
 
 
+%package services
+Summary: services components for the xrdp package.
+Group: Systemd services
+
+%description services
+services components for the xrdp package.
+
+
 %prep
 %setup -q -n xrdp-0.9.8
 %patch1 -p1
@@ -120,7 +120,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1537931404
+export SOURCE_DATE_EPOCH=1542435116
 export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
@@ -140,10 +140,10 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1537931404
+export SOURCE_DATE_EPOCH=1542435116
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/usr/share/doc/xrdp
-cp COPYING %{buildroot}/usr/share/doc/xrdp/COPYING
+mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
+cp COPYING %{buildroot}/usr/share/package-licenses/xrdp/COPYING
 %make_install
 ## install_append content
 mkdir -p %{buildroot}/usr/share/defaults
@@ -170,11 +170,6 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 /usr/bin/xrdp-sesadmin
 /usr/bin/xrdp-sesman
 /usr/bin/xrdp-sesrun
-
-%files config
-%defattr(-,root,root,-)
-/usr/lib/systemd/system/xrdp-sesman.service
-/usr/lib/systemd/system/xrdp.service
 
 %files data
 %defattr(-,root,root,-)
@@ -251,10 +246,10 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/doc/xrdp/COPYING
+/usr/share/package-licenses/xrdp/COPYING
 
 %files man
-%defattr(-,root,root,-)
+%defattr(0644,root,root,0755)
 /usr/share/man/man1/xrdp-dis.1
 /usr/share/man/man5/sesman.ini.5
 /usr/share/man/man5/xrdp.ini.5
@@ -265,3 +260,8 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 /usr/share/man/man8/xrdp-sesman.8
 /usr/share/man/man8/xrdp-sesrun.8
 /usr/share/man/man8/xrdp.8
+
+%files services
+%defattr(-,root,root,-)
+/usr/lib/systemd/system/xrdp-sesman.service
+/usr/lib/systemd/system/xrdp.service
