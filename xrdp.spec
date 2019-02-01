@@ -6,11 +6,11 @@
 #
 %define keepstatic 1
 Name     : xrdp
-Version  : 0.9.8
-Release  : 28
-URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.8/xrdp-0.9.8.tar.gz
-Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.8/xrdp-0.9.8.tar.gz
-Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.8/xrdp-0.9.8.tar.gz.asc
+Version  : 0.9.9
+Release  : 31
+URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.9/xrdp-0.9.9.tar.gz
+Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.9/xrdp-0.9.9.tar.gz
+Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.9/xrdp-0.9.9.tar.gz.asc
 Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
@@ -111,7 +111,7 @@ services components for the xrdp package.
 
 
 %prep
-%setup -q -n xrdp-0.9.8
+%setup -q -n xrdp-0.9.9
 %patch1 -p1
 %patch2 -p1
 
@@ -120,7 +120,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1542435116
+export SOURCE_DATE_EPOCH=1549070857
 export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
@@ -140,7 +140,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1542435116
+export SOURCE_DATE_EPOCH=1549070857
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
 cp COPYING %{buildroot}/usr/share/package-licenses/xrdp/COPYING
@@ -190,6 +190,7 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 /usr/share/defaults/xrdp/km-0000041d.ini
 /usr/share/defaults/xrdp/km-00000807.ini
 /usr/share/defaults/xrdp/km-00000809.ini
+/usr/share/defaults/xrdp/km-0000080a.ini
 /usr/share/defaults/xrdp/km-0000080c.ini
 /usr/share/defaults/xrdp/km-00000813.ini
 /usr/share/defaults/xrdp/km-00000816.ini
