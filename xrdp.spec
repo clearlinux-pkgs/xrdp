@@ -6,12 +6,12 @@
 #
 %define keepstatic 1
 Name     : xrdp
-Version  : 0.9.9
-Release  : 31
-URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.9/xrdp-0.9.9.tar.gz
-Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.9/xrdp-0.9.9.tar.gz
-Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.9/xrdp-0.9.9.tar.gz.asc
-Summary  : An open source Remote Desktop Protocol (RDP) server
+Version  : 0.9.10
+Release  : 32
+URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.10/xrdp-0.9.10.tar.gz
+Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.10/xrdp-0.9.10.tar.gz
+Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.10/xrdp-0.9.10.tar.gz.asc
+Summary  : An open source remote desktop protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
 Requires: xrdp-bin = %{version}-%{release}
@@ -42,14 +42,14 @@ Patch1: 0001-Remove-RC4-support-for-OpenSSL.patch
 Patch2: stateless.patch
 
 %description
-
+This is a fast jpeg2000 codec compatible with MS RDP servers and xrdp.
+Assembly code in critial parts to maximize speed.
 
 %package bin
 Summary: bin components for the xrdp package.
 Group: Binaries
 Requires: xrdp-data = %{version}-%{release}
 Requires: xrdp-license = %{version}-%{release}
-Requires: xrdp-man = %{version}-%{release}
 Requires: xrdp-services = %{version}-%{release}
 
 %description bin
@@ -71,6 +71,7 @@ Requires: xrdp-lib = %{version}-%{release}
 Requires: xrdp-bin = %{version}-%{release}
 Requires: xrdp-data = %{version}-%{release}
 Provides: xrdp-devel = %{version}-%{release}
+Requires: xrdp = %{version}-%{release}
 
 %description dev
 dev components for the xrdp package.
@@ -110,8 +111,17 @@ Group: Systemd services
 services components for the xrdp package.
 
 
+%package staticdev
+Summary: staticdev components for the xrdp package.
+Group: Default
+Requires: xrdp-dev = %{version}-%{release}
+
+%description staticdev
+staticdev components for the xrdp package.
+
+
 %prep
-%setup -q -n xrdp-0.9.9
+%setup -q -n xrdp-0.9.10
 %patch1 -p1
 %patch2 -p1
 
@@ -120,11 +130,11 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1549070857
-export CFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
-export FCFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
-export FFLAGS="$CFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
-export CXXFLAGS="$CXXFLAGS -fstack-protector-strong -mzero-caller-saved-regs=used "
+export SOURCE_DATE_EPOCH=1555598171
+export CFLAGS="$CFLAGS -fcf-protection=full -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FCFLAGS="$CFLAGS -fcf-protection=full -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FFLAGS="$CFLAGS -fcf-protection=full -fstack-protector-strong -mzero-caller-saved-regs=used "
+export CXXFLAGS="$CXXFLAGS -fcf-protection=full -fstack-protector-strong -mzero-caller-saved-regs=used "
 %configure  --enable-pixman \
 --enable-jpeg \
 --enable-fuse \
@@ -140,7 +150,7 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1549070857
+export SOURCE_DATE_EPOCH=1555598171
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
 cp COPYING %{buildroot}/usr/share/package-licenses/xrdp/COPYING
@@ -175,6 +185,7 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 %defattr(-,root,root,-)
 %exclude /usr/share/defaults/xrdp/cert.pem
 %exclude /usr/share/defaults/xrdp/key.pem
+/usr/share/defaults/xrdp/km-00000406.ini
 /usr/share/defaults/xrdp/km-00000407.ini
 /usr/share/defaults/xrdp/km-00000409.ini
 /usr/share/defaults/xrdp/km-0000040a.ini
@@ -216,7 +227,6 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 %files dev
 %defattr(-,root,root,-)
 /usr/include/*.h
-/usr/lib64/*.a
 /usr/lib64/libpainter.so
 /usr/lib64/librfxencode.so
 /usr/lib64/pkgconfig/libpainter.pc
@@ -266,3 +276,8 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 %defattr(-,root,root,-)
 /usr/lib/systemd/system/xrdp-sesman.service
 /usr/lib/systemd/system/xrdp.service
+
+%files staticdev
+%defattr(-,root,root,-)
+/usr/lib64/libpainter.a
+/usr/lib64/librfxencode.a
