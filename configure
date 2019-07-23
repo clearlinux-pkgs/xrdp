@@ -1,5 +1,5 @@
 --enable-pixman
 --enable-jpeg
---enable-fuse 
---enable-kerberos 
+--enable-fuse
+--enable-pam
 --enable-vsock

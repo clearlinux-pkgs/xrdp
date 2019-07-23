@@ -7,11 +7,11 @@
 %define keepstatic 1
 Name     : xrdp
 Version  : 0.9.10
-Release  : 32
+Release  : 34
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.10/xrdp-0.9.10.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.10/xrdp-0.9.10.tar.gz
 Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.10/xrdp-0.9.10.tar.gz.asc
-Summary  : An open source remote desktop protocol (RDP) server
+Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
 Requires: xrdp-bin = %{version}-%{release}
@@ -24,7 +24,6 @@ BuildRequires : FreeRDP-dev
 BuildRequires : Linux-PAM-dev
 BuildRequires : buildreq-qmake
 BuildRequires : e2fsprogs-dev
-BuildRequires : krb5-dev
 BuildRequires : libXfixes-dev
 BuildRequires : libXrandr-dev
 BuildRequires : libjpeg-turbo-dev
@@ -42,8 +41,9 @@ Patch1: 0001-Remove-RC4-support-for-OpenSSL.patch
 Patch2: stateless.patch
 
 %description
-This is a fast jpeg2000 codec compatible with MS RDP servers and xrdp.
-Assembly code in critial parts to maximize speed.
+[![Build Status](https://travis-ci.org/neutrinolabs/xrdp.svg?branch=devel)](https://travis-ci.org/neutrinolabs/xrdp)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/neutrinolabs/xrdp)
+![Apache-License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
 
 %package bin
 Summary: bin components for the xrdp package.
@@ -129,28 +129,29 @@ staticdev components for the xrdp package.
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-export LANG=C
-export SOURCE_DATE_EPOCH=1555598171
-export CFLAGS="$CFLAGS -fcf-protection=full -fstack-protector-strong -mzero-caller-saved-regs=used "
-export FCFLAGS="$CFLAGS -fcf-protection=full -fstack-protector-strong -mzero-caller-saved-regs=used "
-export FFLAGS="$CFLAGS -fcf-protection=full -fstack-protector-strong -mzero-caller-saved-regs=used "
-export CXXFLAGS="$CXXFLAGS -fcf-protection=full -fstack-protector-strong -mzero-caller-saved-regs=used "
+export LANG=C.UTF-8
+export SOURCE_DATE_EPOCH=1563913800
+export GCC_IGNORE_WERROR=1
+export CFLAGS="$CFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FCFLAGS="$CFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FFLAGS="$CFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
+export CXXFLAGS="$CXXFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
 %configure  --enable-pixman \
 --enable-jpeg \
 --enable-fuse \
---enable-kerberos \
+--enable-pam \
 --enable-vsock
 make  %{?_smp_mflags}
 
 %check
-export LANG=C
+export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1555598171
+export SOURCE_DATE_EPOCH=1563913800
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
 cp COPYING %{buildroot}/usr/share/package-licenses/xrdp/COPYING
@@ -158,6 +159,7 @@ cp COPYING %{buildroot}/usr/share/package-licenses/xrdp/COPYING
 ## install_append content
 mkdir -p %{buildroot}/usr/share/defaults
 mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
+mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
 ## install_append end
 
 %files
@@ -215,6 +217,7 @@ mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 /usr/share/defaults/xrdp/xrdp.ini
 /usr/share/defaults/xrdp/xrdp.sh
 /usr/share/defaults/xrdp/xrdp_keyboard.ini
+/usr/share/pam.d/xrdp-sesman
 /usr/share/xrdp/ad24b.bmp
 /usr/share/xrdp/ad256.bmp
 /usr/share/xrdp/cursor0.cur
