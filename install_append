@@ -1,3 +1,5 @@
 mkdir -p %{buildroot}/usr/share/defaults
 mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
+rm -f %{buildroot}/usr/share/defaults/xrdp/cert.pem
+rm -f %{buildroot}/usr/share/defaults/xrdp/key.pem

@@ -1,7 +1,32 @@
-diff -Naur xrdp-0.9.9-orig/common/os_calls.c xrdp-0.9.9/common/os_calls.c
---- xrdp-0.9.9-orig/common/os_calls.c	2018-12-20 02:15:29.000000000 +0000
-+++ xrdp-0.9.9/common/os_calls.c	2019-02-01 20:30:56.434569041 +0000
-@@ -3823,3 +3823,32 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Arjan van de Ven <arjan@linux.intel.com>
+Date: Tue, 10 Jul 2018 02:24:16 +0000
+Subject: [PATCH] Fix stateless
+
+Signed-off-by: Patrick McCarty <patrick.mccarty@intel.com>
+---
+ common/os_calls.c             | 30 ++++++++++++++++++++++++++++++
+ common/os_calls.h             |  1 +
+ libxrdp/xrdp_rdp.c            |  2 +-
+ libxrdp/xrdp_sec.c            |  4 ++--
+ sesman/chansrv/chansrv.c      |  2 +-
+ sesman/chansrv/chansrv_fuse.c |  2 +-
+ sesman/config.c               |  2 +-
+ sesman/sesman.c               |  2 +-
+ sesman/sig.c                  |  2 +-
+ xrdp/lang.c                   |  6 +++---
+ xrdp/xrdp.c                   |  4 ++--
+ xrdp/xrdp_listen.c            |  2 +-
+ xrdp/xrdp_login_wnd.c         |  4 ++--
+ xrdp/xrdp_mm.c                |  2 +-
+ xrdp/xrdp_wm.c                |  6 +++---
+ 15 files changed, 51 insertions(+), 20 deletions(-)
+
+diff --git a/common/os_calls.c b/common/os_calls.c
+index 2b4e0e9..37aab51 100644
+--- a/common/os_calls.c
++++ b/common/os_calls.c
+@@ -3842,6 +3842,36 @@ g_mirror_memcpy(void *dst, const void *src, int len)
      return 0;
  }
  
@@ -34,22 +59,27 @@ diff -Naur xrdp-0.9.9-orig/common/os_calls.c xrdp-0.9.9/common/os_calls.c
 +    fprintf(stderr, "Buffer exceeds given size, aborting");
 +    abort();
 +}
-\ No newline at end of file
-diff -Naur xrdp-0.9.9-orig/common/os_calls.h xrdp-0.9.9/common/os_calls.h
---- xrdp-0.9.9-orig/common/os_calls.h	2018-12-20 02:15:29.000000000 +0000
-+++ xrdp-0.9.9/common/os_calls.h	2019-02-01 20:30:56.434569041 +0000
-@@ -183,6 +183,7 @@
++
+ /*****************************************************************************/
+ int
+ g_tcp4_socket(void)
+diff --git a/common/os_calls.h b/common/os_calls.h
+index b52a84d..ad9435b 100644
+--- a/common/os_calls.h
++++ b/common/os_calls.h
+@@ -183,6 +183,7 @@ int      g_text2bool(const char *s);
+ void *   g_shmat(int shmid);
  int      g_shmdt(const void *shmaddr);
  int      g_gethostname(char *name, int len);
++void     g_snprintf_config(char *dest, int size, const char *fmt, ...) printflike(3, 4);
  int      g_mirror_memcpy(void *dst, const void *src, int len);
-+void	 g_snprintf_config(char *dest, int size, const char *fmt, ...) printflike(3, 4);
- 
- /* glib-style wrappers */
- #define g_new(struct_type, n_structs) \
-diff -Naur xrdp-0.9.9-orig/libxrdp/xrdp_rdp.c xrdp-0.9.9/libxrdp/xrdp_rdp.c
---- xrdp-0.9.9-orig/libxrdp/xrdp_rdp.c	2018-12-25 04:45:45.000000000 +0000
-+++ xrdp-0.9.9/libxrdp/xrdp_rdp.c	2019-02-01 20:30:52.456523206 +0000
-@@ -60,7 +60,7 @@
+ int      g_tcp4_socket(void);
+ int      g_tcp4_bind_address(int sck, const char *port, const char *address);
+diff --git a/libxrdp/xrdp_rdp.c b/libxrdp/xrdp_rdp.c
+index 351e367..32db350 100644
+--- a/libxrdp/xrdp_rdp.c
++++ b/libxrdp/xrdp_rdp.c
+@@ -60,7 +60,7 @@ xrdp_rdp_read_config(struct xrdp_client_info *client_info)
      items->auto_free = 1;
      values = list_create();
      values->auto_free = 1;
@@ -58,10 +88,11 @@ diff -Naur xrdp-0.9.9-orig/libxrdp/xrdp_rdp.c xrdp-0.9.9/libxrdp/xrdp_rdp.c
      DEBUG(("cfg_file %s", cfg_file));
      file_by_name_read_section(cfg_file, "globals", items, values);
  
-diff -Naur xrdp-0.9.9-orig/libxrdp/xrdp_sec.c xrdp-0.9.9/libxrdp/xrdp_sec.c
---- xrdp-0.9.9-orig/libxrdp/xrdp_sec.c	2018-12-25 04:45:45.000000000 +0000
-+++ xrdp-0.9.9/libxrdp/xrdp_sec.c	2019-02-01 20:30:52.456523206 +0000
-@@ -260,7 +260,7 @@
+diff --git a/libxrdp/xrdp_sec.c b/libxrdp/xrdp_sec.c
+index 31197ab..07a73a2 100644
+--- a/libxrdp/xrdp_sec.c
++++ b/libxrdp/xrdp_sec.c
+@@ -260,7 +260,7 @@ xrdp_load_keyboard_layout(struct xrdp_client_info *client_info)
          client_info->keyboard_subtype = 1;
      }
  
@@ -70,7 +101,7 @@ diff -Naur xrdp-0.9.9-orig/libxrdp/xrdp_sec.c xrdp-0.9.9/libxrdp/xrdp_sec.c
      LLOGLN(10, ("keyboard_cfg_file %s", keyboard_cfg_file));
  
      fd = g_file_open(keyboard_cfg_file);
-@@ -2302,7 +2302,7 @@
+@@ -2302,7 +2302,7 @@ xrdp_sec_incoming(struct xrdp_sec *self)
              items->auto_free = 1;
              values = list_create();
              values->auto_free = 1;
@@ -79,10 +110,11 @@ diff -Naur xrdp-0.9.9-orig/libxrdp/xrdp_sec.c xrdp-0.9.9/libxrdp/xrdp_sec.c
  
              if (file_by_name_read_section(key_file, "keys", items, values) != 0)
              {
-diff -Naur xrdp-0.9.9-orig/sesman/chansrv/chansrv.c xrdp-0.9.9/sesman/chansrv/chansrv.c
---- xrdp-0.9.9-orig/sesman/chansrv/chansrv.c	2018-12-25 04:45:45.000000000 +0000
-+++ xrdp-0.9.9/sesman/chansrv/chansrv.c	2019-02-01 20:30:52.456523206 +0000
-@@ -1636,7 +1636,7 @@
+diff --git a/sesman/chansrv/chansrv.c b/sesman/chansrv/chansrv.c
+index 6b1b932..5eb6994 100644
+--- a/sesman/chansrv/chansrv.c
++++ b/sesman/chansrv/chansrv.c
+@@ -1640,7 +1640,7 @@ read_ini(void)
      values = list_create();
      values->auto_free = 1;
      g_use_unix_socket = 0;
@@ -91,10 +123,11 @@ diff -Naur xrdp-0.9.9-orig/sesman/chansrv/chansrv.c xrdp-0.9.9/sesman/chansrv/ch
  
      if (file_by_name_read_section(filename, "Globals", names, values) == 0)
      {
-diff -Naur xrdp-0.9.9-orig/sesman/chansrv/chansrv_fuse.c xrdp-0.9.9/sesman/chansrv/chansrv_fuse.c
---- xrdp-0.9.9-orig/sesman/chansrv/chansrv_fuse.c	2018-12-25 04:45:45.000000000 +0000
-+++ xrdp-0.9.9/sesman/chansrv/chansrv_fuse.c	2019-02-01 20:30:52.456523206 +0000
-@@ -379,7 +379,7 @@
+diff --git a/sesman/chansrv/chansrv_fuse.c b/sesman/chansrv/chansrv_fuse.c
+index 842bca0..031163d 100644
+--- a/sesman/chansrv/chansrv_fuse.c
++++ b/sesman/chansrv/chansrv_fuse.c
+@@ -414,7 +414,7 @@ load_fuse_config(void)
      items->auto_free = 1;
      values = list_create();
      values->auto_free = 1;
@@ -103,10 +136,11 @@ diff -Naur xrdp-0.9.9-orig/sesman/chansrv/chansrv_fuse.c xrdp-0.9.9/sesman/chans
      file_by_name_read_section(cfg_file, "Chansrv", items, values);
      for (index = 0; index < items->count; index++)
      {
-diff -Naur xrdp-0.9.9-orig/sesman/config.c xrdp-0.9.9/sesman/config.c
---- xrdp-0.9.9-orig/sesman/config.c	2018-10-25 06:20:43.000000000 +0000
-+++ xrdp-0.9.9/sesman/config.c	2019-02-01 20:30:52.456523206 +0000
-@@ -48,7 +48,7 @@
+diff --git a/sesman/config.c b/sesman/config.c
+index c508dfa..73af087 100644
+--- a/sesman/config.c
++++ b/sesman/config.c
+@@ -46,7 +46,7 @@ config_read(struct config_sesman *cfg)
      struct list *param_v;
      char cfg_file[256];
  
@@ -115,10 +149,11 @@ diff -Naur xrdp-0.9.9-orig/sesman/config.c xrdp-0.9.9/sesman/config.c
      fd = g_file_open(cfg_file);
  
      if (-1 == fd)
-diff -Naur xrdp-0.9.9-orig/sesman/sesman.c xrdp-0.9.9/sesman/sesman.c
---- xrdp-0.9.9-orig/sesman/sesman.c	2018-10-25 06:20:43.000000000 +0000
-+++ xrdp-0.9.9/sesman/sesman.c	2019-02-01 20:30:52.456523206 +0000
-@@ -317,7 +317,7 @@
+diff --git a/sesman/sesman.c b/sesman/sesman.c
+index 73c7d0a..2d7d78e 100644
+--- a/sesman/sesman.c
++++ b/sesman/sesman.c
+@@ -317,7 +317,7 @@ main(int argc, char **argv)
          config_dump(g_cfg);
      }
  
@@ -127,10 +162,11 @@ diff -Naur xrdp-0.9.9-orig/sesman/sesman.c xrdp-0.9.9/sesman/sesman.c
  
      /* starting logging subsystem */
      log_error = log_start(cfg_file, "xrdp-sesman");
-diff -Naur xrdp-0.9.9-orig/sesman/sig.c xrdp-0.9.9/sesman/sig.c
---- xrdp-0.9.9-orig/sesman/sig.c	2018-10-19 07:09:19.000000000 +0000
-+++ xrdp-0.9.9/sesman/sig.c	2019-02-01 20:30:52.457523218 +0000
-@@ -101,7 +101,7 @@
+diff --git a/sesman/sig.c b/sesman/sig.c
+index 782e8fe..5fdd9ac 100644
+--- a/sesman/sig.c
++++ b/sesman/sig.c
+@@ -101,7 +101,7 @@ sig_sesman_reload_cfg(int sig)
      /* replace old config with newly read one */
      g_cfg = cfg;
  
@@ -139,10 +175,11 @@ diff -Naur xrdp-0.9.9-orig/sesman/sig.c xrdp-0.9.9/sesman/sig.c
  
      /* start again logging subsystem */
      error = log_start(cfg_file, "xrdp-sesman");
-diff -Naur xrdp-0.9.9-orig/xrdp/lang.c xrdp-0.9.9/xrdp/lang.c
---- xrdp-0.9.9-orig/xrdp/lang.c	2018-10-19 07:09:19.000000000 +0000
-+++ xrdp-0.9.9/xrdp/lang.c	2019-02-01 20:30:52.457523218 +0000
-@@ -237,21 +237,21 @@
+diff --git a/xrdp/lang.c b/xrdp/lang.c
+index ff24259..a8ebc94 100644
+--- a/xrdp/lang.c
++++ b/xrdp/lang.c
+@@ -237,21 +237,21 @@ get_keymaps(int keylayout, struct xrdp_keymap *keymap)
      filename = (char *)g_malloc(256, 0);
  
      /* check if there is a keymap file e.g. km-e00100411.ini */
@@ -167,10 +204,11 @@ diff -Naur xrdp-0.9.9-orig/xrdp/lang.c xrdp-0.9.9/xrdp/lang.c
      }
  
      if (g_file_exist(filename))
-diff -Naur xrdp-0.9.9-orig/xrdp/xrdp.c xrdp-0.9.9/xrdp/xrdp.c
---- xrdp-0.9.9-orig/xrdp/xrdp.c	2018-10-25 06:20:43.000000000 +0000
-+++ xrdp-0.9.9/xrdp/xrdp.c	2019-02-01 20:30:52.457523218 +0000
-@@ -394,7 +394,7 @@
+diff --git a/xrdp/xrdp.c b/xrdp/xrdp.c
+index f343580..219f752 100644
+--- a/xrdp/xrdp.c
++++ b/xrdp/xrdp.c
+@@ -401,7 +401,7 @@ xrdp_sanity_check(void)
          return 1;
      }
  
@@ -179,7 +217,7 @@ diff -Naur xrdp-0.9.9-orig/xrdp/xrdp.c xrdp-0.9.9/xrdp/xrdp.c
      if (!g_file_exist(key_file))
      {
          g_writeln("File %s is missing, create it using xrdp-keygen", key_file);
-@@ -428,7 +428,7 @@
+@@ -435,7 +435,7 @@ main(int argc, char **argv)
          DEBUG(("Argument %i - %s", test, argv[test]));
      }
  
@@ -188,22 +226,24 @@ diff -Naur xrdp-0.9.9-orig/xrdp/xrdp.c xrdp-0.9.9/xrdp/xrdp.c
  
      startup_params = (struct xrdp_startup_params *)
                       g_malloc(sizeof(struct xrdp_startup_params), 1);
-diff -Naur xrdp-0.9.9-orig/xrdp/xrdp_listen.c xrdp-0.9.9/xrdp/xrdp_listen.c
---- xrdp-0.9.9-orig/xrdp/xrdp_listen.c	2018-10-25 06:20:43.000000000 +0000
-+++ xrdp-0.9.9/xrdp/xrdp_listen.c	2019-02-01 20:30:52.457523218 +0000
-@@ -169,7 +169,7 @@
-     /* Default to all */
-     g_strncpy(address, "0.0.0.0", address_bytes - 1);
-     /* see if port or address is in xrdp.ini file */
+diff --git a/xrdp/xrdp_listen.c b/xrdp/xrdp_listen.c
+index 9632edd..622400b 100644
+--- a/xrdp/xrdp_listen.c
++++ b/xrdp/xrdp_listen.c
+@@ -170,7 +170,7 @@ xrdp_listen_get_startup_params(struct xrdp_listen *self)
+     startup_params = self->startup_params;
+     port_override = startup_params->port[0] != 0;
+     fork_override = startup_params->fork;
 -    g_snprintf(cfg_file, 255, "%s/xrdp.ini", XRDP_CFG_PATH);
 +    g_snprintf_config(cfg_file, 255, "xrdp.ini");
      fd = g_file_open(cfg_file);
-     *mode = TRANS_MODE_TCP;
-     *tcp_nodelay = 0 ;
-diff -Naur xrdp-0.9.9-orig/xrdp/xrdp_login_wnd.c xrdp-0.9.9/xrdp/xrdp_login_wnd.c
---- xrdp-0.9.9-orig/xrdp/xrdp_login_wnd.c	2018-10-25 07:00:14.000000000 +0000
-+++ xrdp-0.9.9/xrdp/xrdp_login_wnd.c	2019-02-01 20:30:52.457523218 +0000
-@@ -568,7 +568,7 @@
+     if (fd != -1)
+     {
+diff --git a/xrdp/xrdp_login_wnd.c b/xrdp/xrdp_login_wnd.c
+index c09f800..1cd5203 100644
+--- a/xrdp/xrdp_login_wnd.c
++++ b/xrdp/xrdp_login_wnd.c
+@@ -568,7 +568,7 @@ xrdp_wm_login_fill_in_combo(struct xrdp_wm *self, struct xrdp_bitmap *b)
      section_names->auto_free = 1;
      section_values = list_create();
      section_values->auto_free = 1;
@@ -212,7 +252,7 @@ diff -Naur xrdp-0.9.9-orig/xrdp/xrdp_login_wnd.c xrdp-0.9.9/xrdp/xrdp_login_wnd.
      fd = g_file_open(cfg_file); /* xrdp.ini */
  
      if (fd < 0)
-@@ -873,7 +873,7 @@
+@@ -873,7 +873,7 @@ load_xrdp_config(struct xrdp_config *config, int bpp)
      globals->ls_btn_cancel_height = 30;
  
      /* open xrdp.ini file */
@@ -221,10 +261,11 @@ diff -Naur xrdp-0.9.9-orig/xrdp/xrdp_login_wnd.c xrdp-0.9.9/xrdp/xrdp_login_wnd.
      if ((fd = g_file_open(buf)) < 0)
      {
          log_message(LOG_LEVEL_ERROR,"load_config: Could not read "
-diff -Naur xrdp-0.9.9-orig/xrdp/xrdp_mm.c xrdp-0.9.9/xrdp/xrdp_mm.c
---- xrdp-0.9.9-orig/xrdp/xrdp_mm.c	2018-12-25 04:45:45.000000000 +0000
-+++ xrdp-0.9.9/xrdp/xrdp_mm.c	2019-02-01 20:30:52.457523218 +0000
-@@ -1602,7 +1602,7 @@
+diff --git a/xrdp/xrdp_mm.c b/xrdp/xrdp_mm.c
+index 64c7560..43eedce 100644
+--- a/xrdp/xrdp_mm.c
++++ b/xrdp/xrdp_mm.c
+@@ -1632,7 +1632,7 @@ xrdp_mm_get_sesman_port(char *port, int port_bytes)
      /* default to port 3350 */
      g_strncpy(port, "3350", port_bytes - 1);
      /* see if port is in sesman.ini file */
@@ -233,10 +274,11 @@ diff -Naur xrdp-0.9.9-orig/xrdp/xrdp_mm.c xrdp-0.9.9/xrdp/xrdp_mm.c
      fd = g_file_open(cfg_file);
  
      if (fd >= 0)
-diff -Naur xrdp-0.9.9-orig/xrdp/xrdp_wm.c xrdp-0.9.9/xrdp/xrdp_wm.c
---- xrdp-0.9.9-orig/xrdp/xrdp_wm.c	2018-12-25 04:45:45.000000000 +0000
-+++ xrdp-0.9.9/xrdp/xrdp_wm.c	2019-02-01 20:30:52.458523229 +0000
-@@ -414,7 +414,7 @@
+diff --git a/xrdp/xrdp_wm.c b/xrdp/xrdp_wm.c
+index f68b11e..92e8e3d 100644
+--- a/xrdp/xrdp_wm.c
++++ b/xrdp/xrdp_wm.c
+@@ -414,7 +414,7 @@ xrdp_wm_load_static_colors_plus(struct xrdp_wm *self, char *autorun_name)
      self->background = HCOLOR(self->screen->bpp, 0x000000);
  
      /* now load them from the globals in xrdp.ini if defined */
@@ -245,7 +287,7 @@ diff -Naur xrdp-0.9.9-orig/xrdp/xrdp_wm.c xrdp-0.9.9/xrdp/xrdp_wm.c
      fd = g_file_open(cfg_file);
  
      if (fd >= 0)
-@@ -580,7 +580,7 @@
+@@ -580,7 +580,7 @@ xrdp_wm_init(struct xrdp_wm *self)
      names->auto_free = 1;
      values = list_create();
      values->auto_free = 1;
@@ -254,7 +296,7 @@ diff -Naur xrdp-0.9.9-orig/xrdp/xrdp_wm.c xrdp-0.9.9/xrdp/xrdp_wm.c
      if (file_by_name_read_section(cfg_file, "Channels", names, values) == 0)
      {
          int error;
-@@ -648,7 +648,7 @@
+@@ -648,7 +648,7 @@ xrdp_wm_init(struct xrdp_wm *self)
           * NOTE: this should eventually be accessed from self->xrdp_config
           */
  

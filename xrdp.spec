@@ -6,11 +6,11 @@
 #
 %define keepstatic 1
 Name     : xrdp
-Version  : 0.9.10
-Release  : 34
-URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.10/xrdp-0.9.10.tar.gz
-Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.10/xrdp-0.9.10.tar.gz
-Source99 : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.10/xrdp-0.9.10.tar.gz.asc
+Version  : 0.9.12
+Release  : 36
+URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.12/xrdp-0.9.12.tar.gz
+Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.12/xrdp-0.9.12.tar.gz
+Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.12/xrdp-0.9.12.tar.gz.asc
 Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
@@ -23,7 +23,6 @@ Requires: xrdp-services = %{version}-%{release}
 BuildRequires : FreeRDP-dev
 BuildRequires : Linux-PAM-dev
 BuildRequires : buildreq-qmake
-BuildRequires : e2fsprogs-dev
 BuildRequires : libXfixes-dev
 BuildRequires : libXrandr-dev
 BuildRequires : libjpeg-turbo-dev
@@ -38,12 +37,10 @@ BuildRequires : pkgconfig(systemd)
 BuildRequires : pkgconfig(x11)
 BuildRequires : yasm
 Patch1: 0001-Remove-RC4-support-for-OpenSSL.patch
-Patch2: stateless.patch
+Patch2: 0002-Fix-stateless.patch
 
 %description
-[![Build Status](https://travis-ci.org/neutrinolabs/xrdp.svg?branch=devel)](https://travis-ci.org/neutrinolabs/xrdp)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/neutrinolabs/xrdp)
-![Apache-License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)
+
 
 %package bin
 Summary: bin components for the xrdp package.
@@ -121,7 +118,8 @@ staticdev components for the xrdp package.
 
 
 %prep
-%setup -q -n xrdp-0.9.10
+%setup -q -n xrdp-0.9.12
+cd %{_builddir}/xrdp-0.9.12
 %patch1 -p1
 %patch2 -p1
 
@@ -130,7 +128,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1563913800
+export SOURCE_DATE_EPOCH=1581015416
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$CFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
@@ -151,26 +149,33 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1563913800
+export SOURCE_DATE_EPOCH=1581015416
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
-cp COPYING %{buildroot}/usr/share/package-licenses/xrdp/COPYING
+cp %{_builddir}/xrdp-0.9.12/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6
 %make_install
+## Remove excluded files
+rm -f %{buildroot}/usr/share/xrdp/xrdp/cert.pem
+rm -f %{buildroot}/usr/share/xrdp/xrdp/key.pem
+rm -f %{buildroot}/usr/share/xrdp/cert.pem
+rm -f %{buildroot}/usr/share/xrdp/key.pem
+rm -f %{buildroot}/usr/lib64/xrdp/libcommon.a
+rm -f %{buildroot}/usr/lib64/xrdp/libmc.a
+rm -f %{buildroot}/usr/lib64/xrdp/libscp.a
+rm -f %{buildroot}/usr/lib64/xrdp/libvnc.a
+rm -f %{buildroot}/usr/lib64/xrdp/libxrdp.a
+rm -f %{buildroot}/usr/lib64/xrdp/libxrdpapi.a
+rm -f %{buildroot}/usr/lib64/xrdp/libxup.a
 ## install_append content
 mkdir -p %{buildroot}/usr/share/defaults
 mv %{buildroot}/etc/* %{buildroot}/usr/share/defaults/
 mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
+rm -f %{buildroot}/usr/share/defaults/xrdp/cert.pem
+rm -f %{buildroot}/usr/share/defaults/xrdp/key.pem
 ## install_append end
 
 %files
 %defattr(-,root,root,-)
-%exclude /usr/lib64/xrdp/libcommon.a
-%exclude /usr/lib64/xrdp/libmc.a
-%exclude /usr/lib64/xrdp/libscp.a
-%exclude /usr/lib64/xrdp/libvnc.a
-%exclude /usr/lib64/xrdp/libxrdp.a
-%exclude /usr/lib64/xrdp/libxrdpapi.a
-%exclude /usr/lib64/xrdp/libxup.a
 
 %files bin
 %defattr(-,root,root,-)
@@ -185,8 +190,6 @@ mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
 
 %files data
 %defattr(-,root,root,-)
-%exclude /usr/share/defaults/xrdp/cert.pem
-%exclude /usr/share/defaults/xrdp/key.pem
 /usr/share/defaults/xrdp/km-00000406.ini
 /usr/share/defaults/xrdp/km-00000407.ini
 /usr/share/defaults/xrdp/km-00000409.ini
@@ -215,7 +218,6 @@ mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
 /usr/share/defaults/xrdp/sesman.ini
 /usr/share/defaults/xrdp/startwm.sh
 /usr/share/defaults/xrdp/xrdp.ini
-/usr/share/defaults/xrdp/xrdp.sh
 /usr/share/defaults/xrdp/xrdp_keyboard.ini
 /usr/share/pam.d/xrdp-sesman
 /usr/share/xrdp/ad24b.bmp
@@ -229,7 +231,14 @@ mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
 
 %files dev
 %defattr(-,root,root,-)
-/usr/include/*.h
+/usr/include/painter.h
+/usr/include/rfxcodec_common.h
+/usr/include/rfxcodec_decode.h
+/usr/include/rfxcodec_encode.h
+/usr/include/xrdp_client_info.h
+/usr/include/xrdp_constants.h
+/usr/include/xrdp_rail.h
+/usr/include/xrdp_sockets.h
 /usr/lib64/libpainter.so
 /usr/lib64/librfxencode.so
 /usr/lib64/pkgconfig/libpainter.pc
@@ -260,7 +269,7 @@ mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
 
 %files license
 %defattr(0644,root,root,0755)
-/usr/share/package-licenses/xrdp/COPYING
+/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6
 
 %files man
 %defattr(0644,root,root,0755)
