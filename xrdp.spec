@@ -6,11 +6,11 @@
 #
 %define keepstatic 1
 Name     : xrdp
-Version  : 0.9.12
-Release  : 36
-URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.12/xrdp-0.9.12.tar.gz
-Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.12/xrdp-0.9.12.tar.gz
-Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.12/xrdp-0.9.12.tar.gz.asc
+Version  : 0.9.13
+Release  : 37
+URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.13/xrdp-0.9.13.tar.gz
+Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.13/xrdp-0.9.13.tar.gz
+Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.13/xrdp-0.9.13.tar.gz.asc
 Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
@@ -118,8 +118,8 @@ staticdev components for the xrdp package.
 
 
 %prep
-%setup -q -n xrdp-0.9.12
-cd %{_builddir}/xrdp-0.9.12
+%setup -q -n xrdp-0.9.13
+cd %{_builddir}/xrdp-0.9.13
 %patch1 -p1
 %patch2 -p1
 
@@ -128,11 +128,11 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1581015416
+export SOURCE_DATE_EPOCH=1591813260
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
-export FCFLAGS="$CFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
-export FFLAGS="$CFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FCFLAGS="$FFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FFLAGS="$FFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
 export CXXFLAGS="$CXXFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
 %configure  --enable-pixman \
 --enable-jpeg \
@@ -149,10 +149,10 @@ export no_proxy=localhost,127.0.0.1,0.0.0.0
 make VERBOSE=1 V=1 %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1581015416
+export SOURCE_DATE_EPOCH=1591813260
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
-cp %{_builddir}/xrdp-0.9.12/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6
+cp %{_builddir}/xrdp-0.9.13/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6
 %make_install
 ## Remove excluded files
 rm -f %{buildroot}/usr/share/xrdp/xrdp/cert.pem
@@ -231,6 +231,14 @@ rm -f %{buildroot}/usr/share/defaults/xrdp/key.pem
 
 %files dev
 %defattr(-,root,root,-)
+/usr/include/ms-erref.h
+/usr/include/ms-fscc.h
+/usr/include/ms-rdpbcgr.h
+/usr/include/ms-rdpefs.h
+/usr/include/ms-rdpegdi.h
+/usr/include/ms-rdpele.h
+/usr/include/ms-rdperp.h
+/usr/include/ms-smb2.h
 /usr/include/painter.h
 /usr/include/rfxcodec_common.h
 /usr/include/rfxcodec_decode.h
