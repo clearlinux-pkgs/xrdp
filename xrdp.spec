@@ -6,11 +6,11 @@
 #
 %define keepstatic 1
 Name     : xrdp
-Version  : 0.9.13.1
-Release  : 38
-URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.13.1/xrdp-0.9.13.1.tar.gz
-Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.13.1/xrdp-0.9.13.1.tar.gz
-Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.13.1/xrdp-0.9.13.1.tar.gz.asc
+Version  : 0.9.14
+Release  : 39
+URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.14/xrdp-0.9.14.tar.gz
+Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.14/xrdp-0.9.14.tar.gz
+Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.14/xrdp-0.9.14.tar.gz.asc
 Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
@@ -118,8 +118,8 @@ staticdev components for the xrdp package.
 
 
 %prep
-%setup -q -n xrdp-0.9.13.1
-cd %{_builddir}/xrdp-0.9.13.1
+%setup -q -n xrdp-0.9.14
+cd %{_builddir}/xrdp-0.9.14
 %patch1 -p1
 %patch2 -p1
 
@@ -128,7 +128,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1594619765
+export SOURCE_DATE_EPOCH=1599071115
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
 export FCFLAGS="$FFLAGS -fno-lto -fstack-protector-strong -mzero-caller-saved-regs=used "
@@ -146,13 +146,13 @@ export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
-make VERBOSE=1 V=1 %{?_smp_mflags} check
+make %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1594619765
+export SOURCE_DATE_EPOCH=1599071115
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
-cp %{_builddir}/xrdp-0.9.13.1/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6
+cp %{_builddir}/xrdp-0.9.14/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6
 %make_install
 ## Remove excluded files
 rm -f %{buildroot}/usr/share/xrdp/xrdp/cert.pem
@@ -212,6 +212,7 @@ rm -f %{buildroot}/usr/share/defaults/xrdp/key.pem
 /usr/share/defaults/xrdp/km-00000816.ini
 /usr/share/defaults/xrdp/km-0000100c.ini
 /usr/share/defaults/xrdp/km-00010409.ini
+/usr/share/defaults/xrdp/km-19360409.ini
 /usr/share/defaults/xrdp/pulse/default.pa
 /usr/share/defaults/xrdp/reconnectwm.sh
 /usr/share/defaults/xrdp/rsakeys.ini
