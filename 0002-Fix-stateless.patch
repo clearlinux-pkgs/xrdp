@@ -84,7 +84,7 @@ index fdefff2054ba..790ffe796c49 100644
  
  
  #include "log.h"
-@@ -854,3 +855,48 @@ g_strnjoin(char *dest, int dest_len, const char *joiner, const char *src[], int
+@@ -891,3 +892,48 @@ g_strnjoin(char *dest, int dest_len, const char *joiner, const char *src[], int
  
      return dest;
  }
@@ -137,7 +137,7 @@ diff --git a/common/string_calls.h b/common/string_calls.h
 index e5ca0f90faf1..9ee2f297f353 100644
 --- a/common/string_calls.h
 +++ b/common/string_calls.h
-@@ -161,4 +161,6 @@ int      g_pos(const char *str, const char *to_find);
+@@ -171,4 +171,6 @@ int      g_pos(const char *str, const char *to_find);
  int      g_mbstowcs(twchar *dest, const char *src, int n);
  int      g_wcstombs(char *dest, const twchar *src, int n);
  int      g_strtrim(char *str, int trim_flags);
@@ -161,7 +161,7 @@ diff --git a/libxrdp/xrdp_sec.c b/libxrdp/xrdp_sec.c
 index 7fdf3fc8c3dc..f39c6c02017f 100644
 --- a/libxrdp/xrdp_sec.c
 +++ b/libxrdp/xrdp_sec.c
-@@ -394,7 +394,7 @@ xrdp_load_keyboard_layout(struct xrdp_client_info *client_info)
+@@ -419,7 +419,7 @@ xrdp_load_keyboard_layout(struct xrdp_client_info *client_info)
          client_info->keyboard_subtype = 1;
      }
  
@@ -170,7 +170,7 @@ index 7fdf3fc8c3dc..f39c6c02017f 100644
      LOG(LOG_LEVEL_DEBUG, "keyboard_cfg_file %s", keyboard_cfg_file);
  
      fd = g_file_open(keyboard_cfg_file);
-@@ -2782,7 +2782,7 @@ xrdp_sec_incoming(struct xrdp_sec *self)
+@@ -2811,7 +2811,7 @@ xrdp_sec_incoming(struct xrdp_sec *self)
              items->auto_free = 1;
              values = list_create();
              values->auto_free = 1;
@@ -220,7 +220,7 @@ diff --git a/sesman/sesman.c b/sesman/sesman.c
 index 1b90547a93cb..2c5b3cfa3bb4 100644
 --- a/sesman/sesman.c
 +++ b/sesman/sesman.c
-@@ -386,7 +386,7 @@ main(int argc, char **argv)
+@@ -565,7 +565,7 @@ main(int argc, char **argv)
  
      g_init("xrdp-sesman");
      g_snprintf(pid_file, 255, "%s/xrdp-sesman.pid", XRDP_PID_PATH);
@@ -460,7 +460,7 @@ diff --git a/xrdp/xrdp_mm.c b/xrdp/xrdp_mm.c
 index 6f501fd4aa19..ee4ed1797772 100644
 --- a/xrdp/xrdp_mm.c
 +++ b/xrdp/xrdp_mm.c
-@@ -1833,7 +1833,7 @@ xrdp_mm_get_sesman_port(char *port, int port_bytes)
+@@ -1832,7 +1832,7 @@ xrdp_mm_get_sesman_port(char *port, int port_bytes)
      /* default to port 3350 */
      g_strncpy(port, "3350", port_bytes - 1);
      /* see if port is in sesman.ini file */
@@ -469,6 +469,3 @@ index 6f501fd4aa19..ee4ed1797772 100644
      fd = g_file_open(cfg_file);
  
      if (fd >= 0)
--- 
-2.31.1
-

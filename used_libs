@@ -1,10 +1,8 @@
 libX11.so.6
 libc.so.6
 libcrypto.so.1.1
-libdl.so.2
 libfuse.so.2
 libjpeg.so.62
 libpam.so.0
 libpixman-1.so.0
-libpthread.so.0
 libssl.so.1.1

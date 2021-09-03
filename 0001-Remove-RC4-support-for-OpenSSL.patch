@@ -19,7 +19,7 @@ index d1003b8..8be10d5 100644
  #include <openssl/md5.h>
  #include <openssl/sha.h>
  #include <openssl/hmac.h>
-@@ -127,7 +126,7 @@ ssl_finish(void)
+@@ -128,7 +127,7 @@ ssl_finish(void)
  void *
  ssl_rc4_info_create(void)
  {
@@ -28,7 +28,7 @@ index d1003b8..8be10d5 100644
  }
  
  /*****************************************************************************/
-@@ -141,14 +140,12 @@ ssl_rc4_info_delete(void *rc4_info)
+@@ -142,14 +141,12 @@ ssl_rc4_info_delete(void *rc4_info)
  void
  ssl_rc4_set_key(void *rc4_info, char *key, int len)
  {
