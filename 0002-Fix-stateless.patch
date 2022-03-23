@@ -8,7 +8,7 @@ Signed-off-by: Mark D Horn <mark.d.horn@intel.com>
 ---
  common/os_calls.c        | 30 +++++++++++++++++++
  common/os_calls.h        |  1 +
- common/string_calls.c    | 46 ++++++++++++++++++++++++++++
+ common/string_calls.c    | 45 ++++++++++++++++++++++++++++
  common/string_calls.h    |  2 ++
  libxrdp/libxrdp.c        |  2 +-
  libxrdp/xrdp_sec.c       |  4 +--
@@ -17,13 +17,13 @@ Signed-off-by: Mark D Horn <mark.d.horn@intel.com>
  xrdp/lang.c              |  6 ++--
  xrdp/xrdp.c              | 65 +++++++++++++++++++++-------------------
  xrdp/xrdp_mm.c           |  2 +-
- 11 files changed, 125 insertions(+), 40 deletions(-)
+ 11 files changed, 124 insertions(+), 40 deletions(-)
 
 diff --git a/common/os_calls.c b/common/os_calls.c
-index b9e0af372270..cc914ca992a5 100644
+index e7dea20..479ab9c 100644
 --- a/common/os_calls.c
 +++ b/common/os_calls.c
-@@ -3524,6 +3524,36 @@ g_mirror_memcpy(void *dst, const void *src, int len)
+@@ -3516,6 +3516,36 @@ g_mirror_memcpy(void *dst, const void *src, int len)
      return 0;
  }
  
@@ -61,7 +61,7 @@ index b9e0af372270..cc914ca992a5 100644
  int
  g_tcp4_socket(void)
 diff --git a/common/os_calls.h b/common/os_calls.h
-index b70693fc3730..7895688ade81 100644
+index 3e25479..2bd180f 100644
 --- a/common/os_calls.h
 +++ b/common/os_calls.h
 @@ -186,6 +186,7 @@ int      g_save_to_bmp(const char *filename, char *data, int stride_bytes,
@@ -73,7 +73,7 @@ index b70693fc3730..7895688ade81 100644
  int      g_tcp4_socket(void);
  int      g_tcp4_bind_address(int sck, const char *port, const char *address);
 diff --git a/common/string_calls.c b/common/string_calls.c
-index fdefff2054ba..790ffe796c49 100644
+index 18f5451..9b576c0 100644
 --- a/common/string_calls.c
 +++ b/common/string_calls.c
 @@ -25,6 +25,7 @@
@@ -84,11 +84,10 @@ index fdefff2054ba..790ffe796c49 100644
  
  
  #include "log.h"
-@@ -986,3 +987,48 @@ g_bitmask_to_str(int bitmask, const struct bitmask_string bitdefs[],
- 
-     return rlen;
+@@ -1055,3 +1056,47 @@ g_str_to_bitmask(const char *str, const struct bitmask_string bitdefs[],
+     return mask;
  }
-+
+ 
 +char *
 +g_strdupcat(const char *in1, const char *in2)
 +{
@@ -134,10 +133,10 @@ index fdefff2054ba..790ffe796c49 100644
 +    return xrdp_ini;
 +}
 diff --git a/common/string_calls.h b/common/string_calls.h
-index e5ca0f90faf1..9ee2f297f353 100644
+index 87888c1..df8d2bb 100644
 --- a/common/string_calls.h
 +++ b/common/string_calls.h
-@@ -207,4 +207,6 @@ char    *g_strstr(const char *haystack, const char *needle);
+@@ -221,4 +221,6 @@ char    *g_strstr(const char *haystack, const char *needle);
  int      g_mbstowcs(twchar *dest, const char *src, int n);
  int      g_wcstombs(char *dest, const twchar *src, int n);
  int      g_strtrim(char *str, int trim_flags);
@@ -145,7 +144,7 @@ index e5ca0f90faf1..9ee2f297f353 100644
 +char    *g_strdup_config(const char *in);
  #endif
 diff --git a/libxrdp/libxrdp.c b/libxrdp/libxrdp.c
-index 3367306d6b63..49baede721e0 100644
+index 637dff0..cc64d1a 100644
 --- a/libxrdp/libxrdp.c
 +++ b/libxrdp/libxrdp.c
 @@ -47,7 +47,7 @@ libxrdp_init(tbus id, struct trans *trans, const char *xrdp_ini)
@@ -158,7 +157,7 @@ index 3367306d6b63..49baede721e0 100644
      session->rdp = xrdp_rdp_create(session, trans);
      session->orders = xrdp_orders_create(session, (struct xrdp_rdp *)session->rdp);
 diff --git a/libxrdp/xrdp_sec.c b/libxrdp/xrdp_sec.c
-index 7fdf3fc8c3dc..f39c6c02017f 100644
+index 8fa34ae..f42021f 100644
 --- a/libxrdp/xrdp_sec.c
 +++ b/libxrdp/xrdp_sec.c
 @@ -419,7 +419,7 @@ xrdp_load_keyboard_layout(struct xrdp_client_info *client_info)
@@ -180,7 +179,7 @@ index 7fdf3fc8c3dc..f39c6c02017f 100644
              if (file_by_name_read_section(key_file, "keys", items, values) != 0)
              {
 diff --git a/sesman/chansrv/chansrv.c b/sesman/chansrv/chansrv.c
-index 4452d9980f07..fa7c4d4fda85 100644
+index bdfd0c0..eae2e67 100644
 --- a/sesman/chansrv/chansrv.c
 +++ b/sesman/chansrv/chansrv.c
 @@ -67,6 +67,7 @@ int g_rdpsnd_chan_id = -1;  /* rdpsnd  */
@@ -217,10 +216,10 @@ index 4452d9980f07..fa7c4d4fda85 100644
      {
          main_cleanup();
 diff --git a/sesman/sesman.c b/sesman/sesman.c
-index 1b90547a93cb..2c5b3cfa3bb4 100644
+index 3d15a83..5cfb5f3 100644
 --- a/sesman/sesman.c
 +++ b/sesman/sesman.c
-@@ -565,7 +565,7 @@ main(int argc, char **argv)
+@@ -659,7 +659,7 @@ main(int argc, char **argv)
  
      g_init("xrdp-sesman");
      g_snprintf(pid_file, 255, "%s/xrdp-sesman.pid", XRDP_PID_PATH);
@@ -230,7 +229,7 @@ index 1b90547a93cb..2c5b3cfa3bb4 100644
      startup_params.sesman_ini = default_sesman_ini;
  
 diff --git a/xrdp/lang.c b/xrdp/lang.c
-index e4c180778e82..4361f1bbada4 100644
+index e4c1807..4361f1b 100644
 --- a/xrdp/lang.c
 +++ b/xrdp/lang.c
 @@ -239,21 +239,21 @@ get_keymaps(int keylayout, struct xrdp_keymap *keymap)
@@ -259,10 +258,10 @@ index e4c180778e82..4361f1bbada4 100644
  
      if (g_file_exist(filename))
 diff --git a/xrdp/xrdp.c b/xrdp/xrdp.c
-index 3f4f85956e5d..7df4ff3ec7ae 100644
+index e91672f..5472641 100644
 --- a/xrdp/xrdp.c
 +++ b/xrdp/xrdp.c
-@@ -366,7 +366,11 @@ xrdp_process_params(int argc, char **argv,
+@@ -364,7 +364,11 @@ xrdp_process_params(int argc, char **argv,
          else if (nocase_matches(option, "-c", "--config", NULL))
          {
              index++;
@@ -275,7 +274,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
          }
          else /* unknown option */
          {
-@@ -386,7 +390,7 @@ xrdp_sanity_check(void)
+@@ -384,7 +388,7 @@ xrdp_sanity_check(void)
  {
      int intval = 1;
      int host_be;
@@ -284,7 +283,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
  
      /* check compiled endian with actual endian */
      host_be = !((int)(*(unsigned char *)(&intval)));
-@@ -431,15 +435,29 @@ xrdp_sanity_check(void)
+@@ -429,15 +433,29 @@ xrdp_sanity_check(void)
          return 1;
      }
  
@@ -314,7 +313,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
  /*****************************************************************************/
  int
  main(int argc, char **argv)
-@@ -465,7 +483,7 @@ main(int argc, char **argv)
+@@ -463,7 +481,7 @@ main(int argc, char **argv)
      g_init("xrdp");
      ssl_init();
  
@@ -323,7 +322,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
  
      errored_argc = xrdp_process_params(argc, argv, &startup_params);
      if (errored_argc > 0)
-@@ -476,8 +494,7 @@ main(int argc, char **argv)
+@@ -474,8 +492,7 @@ main(int argc, char **argv)
          g_writeln("%s", "");
  
          g_writeln("Unknown option: %s", argv[errored_argc]);
@@ -333,7 +332,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
      }
  
      if (startup_params.help)
-@@ -486,22 +503,19 @@ main(int argc, char **argv)
+@@ -484,22 +501,19 @@ main(int argc, char **argv)
          g_writeln("%s", "");
          print_help();
  
@@ -359,7 +358,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
      }
  
      if (startup_params.kill)
-@@ -534,8 +548,7 @@ main(int argc, char **argv)
+@@ -532,8 +546,7 @@ main(int argc, char **argv)
              g_file_close(fd);
          }
  
@@ -369,7 +368,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
      }
  
      /* starting logging subsystem */
-@@ -562,8 +575,7 @@ main(int argc, char **argv)
+@@ -560,8 +573,7 @@ main(int argc, char **argv)
                  break;
          }
  
@@ -379,7 +378,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
      }
  
  
-@@ -573,8 +585,7 @@ main(int argc, char **argv)
+@@ -571,8 +583,7 @@ main(int argc, char **argv)
          LOG(LOG_LEVEL_ALWAYS, "It looks like xrdp is already running.");
          LOG(LOG_LEVEL_ALWAYS, "If not, delete %s and try again.", pid_file);
          log_end();
@@ -389,7 +388,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
      }
  
      daemon = !startup_params.no_daemon;
-@@ -594,8 +605,7 @@ main(int argc, char **argv)
+@@ -592,8 +603,7 @@ main(int argc, char **argv)
              LOG(LOG_LEVEL_ALWAYS,
                  "running in daemon mode with no access to pid files, quitting");
              log_end();
@@ -399,7 +398,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
          }
  
          if (g_file_write(fd, "0", 1) == -1)
-@@ -603,8 +613,7 @@ main(int argc, char **argv)
+@@ -601,8 +611,7 @@ main(int argc, char **argv)
              LOG(LOG_LEVEL_ALWAYS,
                  "running in daemon mode with no access to pid files, quitting");
              log_end();
@@ -409,7 +408,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
          }
  
          g_file_close(fd);
-@@ -619,10 +628,9 @@ main(int argc, char **argv)
+@@ -617,10 +626,9 @@ main(int argc, char **argv)
              LOG(LOG_LEVEL_ALWAYS, "Failed to start xrdp daemon, "
                  "possibly address already in use.");
              log_end();
@@ -421,7 +420,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
          }
          /* start of daemonizing code */
          pid = g_fork();
-@@ -631,16 +639,14 @@ main(int argc, char **argv)
+@@ -629,16 +637,14 @@ main(int argc, char **argv)
          {
              LOG(LOG_LEVEL_ALWAYS, "problem forking [%s]", g_get_strerror());
              log_end();
@@ -440,7 +439,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
          }
  
          g_sleep(1000);
-@@ -723,15 +729,14 @@ main(int argc, char **argv)
+@@ -721,15 +727,14 @@ main(int argc, char **argv)
      }
  
      log_end();
@@ -459,7 +458,7 @@ index 3f4f85956e5d..7df4ff3ec7ae 100644
  
      return 0;
 diff --git a/xrdp/xrdp_mm.c b/xrdp/xrdp_mm.c
-index 6f501fd4aa19..ee4ed1797772 100644
+index f78aa18..56782a7 100644
 --- a/xrdp/xrdp_mm.c
 +++ b/xrdp/xrdp_mm.c
 @@ -1680,7 +1680,7 @@ xrdp_mm_get_sesman_port(char *port, int port_bytes)

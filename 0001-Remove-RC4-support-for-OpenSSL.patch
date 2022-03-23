@@ -3,12 +3,14 @@ From: George T Kramer <george.t.kramer@intel.com>
 Date: Fri, 31 Mar 2017 14:42:59 -0700
 Subject: [PATCH] Remove RC4 support for OpenSSL
 
+Signed-off-by: Patrick McCarty <patrick.mccarty@intel.com>
 ---
- common/ssl_calls.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ common/ssl_calls.c            | 11 +++++------
+ tests/common/test_ssl_calls.c |  6 ------
+ 2 files changed, 5 insertions(+), 12 deletions(-)
 
 diff --git a/common/ssl_calls.c b/common/ssl_calls.c
-index d1003b8..8be10d5 100644
+index 168add7..e013a51 100644
 --- a/common/ssl_calls.c
 +++ b/common/ssl_calls.c
 @@ -26,7 +26,6 @@
@@ -19,27 +21,64 @@ index d1003b8..8be10d5 100644
  #include <openssl/md5.h>
  #include <openssl/sha.h>
  #include <openssl/hmac.h>
-@@ -128,7 +127,7 @@ ssl_finish(void)
+@@ -202,11 +201,7 @@ struct rc4_data
  void *
  ssl_rc4_info_create(void)
  {
+-#if OPENSSL_VERSION_NUMBER < 0x30000000L
 -    return g_malloc(sizeof(RC4_KEY), 1);
+-#else
+-    return g_malloc(sizeof(struct rc4_data), 1);
+-#endif
 +    return NULL;
  }
  
  /*****************************************************************************/
-@@ -142,14 +141,12 @@ ssl_rc4_info_delete(void *rc4_info)
+@@ -220,6 +215,7 @@ ssl_rc4_info_delete(void *rc4_info)
  void
- ssl_rc4_set_key(void *rc4_info, char *key, int len)
+ ssl_rc4_set_key(void *rc4_info, const char *key, int len)
  {
--    RC4_set_key((RC4_KEY *)rc4_info, len, (tui8 *)key);
++#if 0
+ #if OPENSSL_VERSION_NUMBER < 0x30000000L
+     RC4_set_key((RC4_KEY *)rc4_info, len, (tui8 *)key);
+ #else
+@@ -241,12 +237,14 @@ ssl_rc4_set_key(void *rc4_info, const char *key, int len)
+     ((struct rc4_data *)rc4_info)->i = 0;
+     ((struct rc4_data *)rc4_info)->j = 0;
+ #endif
++#endif
  }
  
  /*****************************************************************************/
  void
  ssl_rc4_crypt(void *rc4_info, char *data, int len)
  {
--    RC4((RC4_KEY *)rc4_info, len, (tui8 *)data, (tui8 *)data);
++#if 0
+ #if OPENSSL_VERSION_NUMBER < 0x30000000L
+     RC4((RC4_KEY *)rc4_info, len, (tui8 *)data, (tui8 *)data);
+ #else
+@@ -289,6 +287,7 @@ ssl_rc4_crypt(void *rc4_info, char *data, int len)
+     ((struct rc4_data *)rc4_info)->i = i;
+     ((struct rc4_data *)rc4_info)->j = j;
+ #endif
++#endif
  }
  
  /* sha1 stuff */
+diff --git a/tests/common/test_ssl_calls.c b/tests/common/test_ssl_calls.c
+index 56d8935..9e16016 100644
+--- a/tests/common/test_ssl_calls.c
++++ b/tests/common/test_ssl_calls.c
+@@ -375,12 +375,6 @@ make_suite_test_ssl_calls(void)
+ 
+     tc_ssl_calls = tcase_create("ssl_calls");
+     suite_add_tcase(s, tc_ssl_calls);
+-    tcase_add_test(tc_ssl_calls, test_rc4_enc_ok);
+-    tcase_add_test(tc_ssl_calls, test_rc4_enc_tv0_ok);
+-    tcase_add_test(tc_ssl_calls, test_rc4_enc_tv1_ok);
+-    tcase_add_test(tc_ssl_calls, test_rc4_enc_tv2_ok);
+-    tcase_add_test(tc_ssl_calls, test_rc4_enc_tv3_ok);
+-    tcase_add_test(tc_ssl_calls, test_rc4_enc_tv4_ok);
+     tcase_add_test(tc_ssl_calls, test_sha1_hash_ok);
+     tcase_add_test(tc_ssl_calls, test_md5_hash_ok);
+     tcase_add_test(tc_ssl_calls, test_des3_enc_ok);

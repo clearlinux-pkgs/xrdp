@@ -1,0 +1,2 @@
+export GCC_IGNORE_WERROR=1
+make %{?_smp_mflags} check
