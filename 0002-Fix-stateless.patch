@@ -169,7 +169,7 @@ index 8fa34ae..f42021f 100644
      LOG(LOG_LEVEL_DEBUG, "keyboard_cfg_file %s", keyboard_cfg_file);
  
      fd = g_file_open(keyboard_cfg_file);
-@@ -2811,7 +2811,7 @@ xrdp_sec_incoming(struct xrdp_sec *self)
+@@ -2830,7 +2830,7 @@ xrdp_sec_incoming(struct xrdp_sec *self)
              items->auto_free = 1;
              values = list_create();
              values->auto_free = 1;
@@ -461,7 +461,7 @@ diff --git a/xrdp/xrdp_mm.c b/xrdp/xrdp_mm.c
 index f78aa18..56782a7 100644
 --- a/xrdp/xrdp_mm.c
 +++ b/xrdp/xrdp_mm.c
-@@ -1680,7 +1680,7 @@ xrdp_mm_get_sesman_port(char *port, int port_bytes)
+@@ -1700,7 +1700,7 @@ xrdp_mm_get_sesman_port(char *port, int port_bytes)
      /* default to port 3350 */
      g_strncpy(port, "3350", port_bytes - 1);
      /* see if port is in sesman.ini file */
