@@ -7,7 +7,7 @@
 %define keepstatic 1
 Name     : xrdp
 Version  : 0.9.20
-Release  : 47
+Release  : 48
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.20/xrdp-0.9.20.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.20/xrdp-0.9.20.tar.gz
 Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.20/xrdp-0.9.20.tar.gz.asc
@@ -132,12 +132,12 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1663262143
+export SOURCE_DATE_EPOCH=1664894375
 export GCC_IGNORE_WERROR=1
-export CFLAGS="$CFLAGS -fno-lto -fstack-protector-strong -fzero-call-used-regs=used "
-export FCFLAGS="$FFLAGS -fno-lto -fstack-protector-strong -fzero-call-used-regs=used "
-export FFLAGS="$FFLAGS -fno-lto -fstack-protector-strong -fzero-call-used-regs=used "
-export CXXFLAGS="$CXXFLAGS -fno-lto -fstack-protector-strong -fzero-call-used-regs=used "
+export CFLAGS="$CFLAGS -fno-lto "
+export FCFLAGS="$FFLAGS -fno-lto "
+export FFLAGS="$FFLAGS -fno-lto "
+export CXXFLAGS="$CXXFLAGS -fno-lto "
 %configure  --enable-pixman \
 --enable-jpeg \
 --enable-fuse \
@@ -154,10 +154,10 @@ export GCC_IGNORE_WERROR=1
 make %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1663262143
+export SOURCE_DATE_EPOCH=1664894375
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
-cp %{_builddir}/xrdp-%{version}/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6
+cp %{_builddir}/xrdp-%{version}/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6 || :
 %make_install
 ## Remove excluded files
 rm -f %{buildroot}*/usr/share/xrdp/xrdp/cert.pem
