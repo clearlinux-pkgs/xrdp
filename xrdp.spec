@@ -6,11 +6,11 @@
 #
 %define keepstatic 1
 Name     : xrdp
-Version  : 0.9.20
-Release  : 48
-URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.20/xrdp-0.9.20.tar.gz
-Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.20/xrdp-0.9.20.tar.gz
-Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.20/xrdp-0.9.20.tar.gz.asc
+Version  : 0.9.21.1
+Release  : 49
+URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.21.1/xrdp-0.9.21.1.tar.gz
+Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.21.1/xrdp-0.9.21.1.tar.gz
+Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.21.1/xrdp-0.9.21.1.tar.gz.asc
 Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
@@ -122,8 +122,8 @@ staticdev components for the xrdp package.
 
 
 %prep
-%setup -q -n xrdp-0.9.20
-cd %{_builddir}/xrdp-0.9.20
+%setup -q -n xrdp-0.9.21.1
+cd %{_builddir}/xrdp-0.9.21.1
 %patch1 -p1
 %patch2 -p1
 
@@ -132,7 +132,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1664894375
+export SOURCE_DATE_EPOCH=1670945410
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fno-lto "
 export FCFLAGS="$FFLAGS -fno-lto "
@@ -154,7 +154,7 @@ export GCC_IGNORE_WERROR=1
 make %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1664894375
+export SOURCE_DATE_EPOCH=1670945410
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
 cp %{_builddir}/xrdp-%{version}/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6 || :
