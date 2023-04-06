@@ -3,3 +3,4 @@
 --enable-fuse
 --enable-pam
 --enable-vsock
+--enable-opus

@@ -4,3 +4,7 @@ FreeRDP-dev
 Linux-PAM-dev
 libXfixes-dev
 libXrandr-dev
+opus-dev
+opusfile-dev
+libvpx-dev
+libjpeg-turbo-dev
