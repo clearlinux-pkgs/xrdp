@@ -8,7 +8,7 @@
 %define keepstatic 1
 Name     : xrdp
 Version  : 0.9.21.1
-Release  : 52
+Release  : 53
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.21.1/xrdp-0.9.21.1.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.21.1/xrdp-0.9.21.1.tar.gz
 Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.21.1/xrdp-0.9.21.1.tar.gz.asc
@@ -47,6 +47,7 @@ BuildRequires : yasm
 %define debug_package %{nil}
 Patch1: 0001-Remove-RC4-support-for-OpenSSL.patch
 Patch2: 0002-Fix-stateless.patch
+Patch3: xfce.patch
 
 %description
 [![Build Status](https://github.com/neutrinolabs/xrdp/actions/workflows/build.yml/badge.svg)](https://github.com/neutrinolabs/xrdp/actions)
@@ -114,6 +115,7 @@ man components for the xrdp package.
 %package services
 Summary: services components for the xrdp package.
 Group: Systemd services
+Requires: systemd
 
 %description services
 services components for the xrdp package.
@@ -133,13 +135,14 @@ staticdev components for the xrdp package.
 cd %{_builddir}/xrdp-0.9.21.1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1680790540
+export SOURCE_DATE_EPOCH=1681745431
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
 export FCFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
@@ -162,7 +165,7 @@ export GCC_IGNORE_WERROR=1
 make %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1680790540
+export SOURCE_DATE_EPOCH=1681745431
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
 cp %{_builddir}/xrdp-%{version}/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6 || :
