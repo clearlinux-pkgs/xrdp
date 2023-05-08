@@ -7,11 +7,11 @@
 #
 %define keepstatic 1
 Name     : xrdp
-Version  : 0.9.21.1
-Release  : 53
-URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.21.1/xrdp-0.9.21.1.tar.gz
-Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.21.1/xrdp-0.9.21.1.tar.gz
-Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.21.1/xrdp-0.9.21.1.tar.gz.asc
+Version  : 0.9.22
+Release  : 54
+URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.22/xrdp-0.9.22.tar.gz
+Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.22/xrdp-0.9.22.tar.gz
+Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.22/xrdp-0.9.22.tar.gz.asc
 Summary  : An open source Remote Desktop Protocol (RDP) server
 Group    : Development/Tools
 License  : Apache-2.0
@@ -131,23 +131,26 @@ staticdev components for the xrdp package.
 
 
 %prep
-%setup -q -n xrdp-0.9.21.1
-cd %{_builddir}/xrdp-0.9.21.1
+%setup -q -n xrdp-0.9.22
+cd %{_builddir}/xrdp-0.9.22
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
+pushd ..
+cp -a xrdp-0.9.22 buildavx2
+popd
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1681745431
+export SOURCE_DATE_EPOCH=1683558270
 export GCC_IGNORE_WERROR=1
-export CFLAGS="$CFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
-export FCFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
-export FFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
-export CXXFLAGS="$CXXFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz "
+export CFLAGS="$CFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export FCFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export FFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
+export CXXFLAGS="$CXXFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
 %configure  --enable-pixman \
 --enable-jpeg \
 --enable-fuse \
@@ -156,6 +159,21 @@ export CXXFLAGS="$CXXFLAGS -fdebug-types-section -femit-struct-debug-baseonly -f
 --enable-opus
 make  %{?_smp_mflags}
 
+unset PKG_CONFIG_PATH
+pushd ../buildavx2/
+export CFLAGS="$CFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export CXXFLAGS="$CXXFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export FFLAGS="$FFLAGS -m64 -march=x86-64-v3 -Wl,-z,x86-64-v3"
+export FCFLAGS="$FCFLAGS -m64 -march=x86-64-v3"
+export LDFLAGS="$LDFLAGS -m64 -march=x86-64-v3"
+%configure  --enable-pixman \
+--enable-jpeg \
+--enable-fuse \
+--enable-pam \
+--enable-vsock \
+--enable-opus
+make  %{?_smp_mflags}
+popd
 %check
 export LANG=C.UTF-8
 export http_proxy=http://127.0.0.1:9/
@@ -165,10 +183,13 @@ export GCC_IGNORE_WERROR=1
 make %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1681745431
+export SOURCE_DATE_EPOCH=1683558270
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
 cp %{_builddir}/xrdp-%{version}/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6 || :
+pushd ../buildavx2/
+%make_install_v3
+popd
 %make_install
 ## Remove excluded files
 rm -f %{buildroot}*/usr/share/xrdp/xrdp/cert.pem
@@ -189,12 +210,21 @@ mv %{buildroot}/usr/share/defaults/pam.d %{buildroot}/usr/share
 rm -f %{buildroot}/usr/share/defaults/xrdp/cert.pem
 rm -f %{buildroot}/usr/share/defaults/xrdp/key.pem
 ## install_append end
+/usr/bin/elf-move.py avx2 %{buildroot}-v3 %{buildroot} %{buildroot}/usr/share/clear/filemap/filemap-%{name}
 
 %files
 %defattr(-,root,root,-)
 
 %files bin
 %defattr(-,root,root,-)
+/V3/usr/bin/xrdp
+/V3/usr/bin/xrdp-chansrv
+/V3/usr/bin/xrdp-dis
+/V3/usr/bin/xrdp-genkeymap
+/V3/usr/bin/xrdp-keygen
+/V3/usr/bin/xrdp-sesadmin
+/V3/usr/bin/xrdp-sesman
+/V3/usr/bin/xrdp-sesrun
 /usr/bin/xrdp
 /usr/bin/xrdp-chansrv
 /usr/bin/xrdp-dis
@@ -266,18 +296,27 @@ rm -f %{buildroot}/usr/share/defaults/xrdp/key.pem
 /usr/include/xrdp_constants.h
 /usr/include/xrdp_rail.h
 /usr/include/xrdp_sockets.h
-/usr/lib64/libpainter.so
-/usr/lib64/librfxencode.so
 /usr/lib64/pkgconfig/libpainter.pc
 /usr/lib64/pkgconfig/rfxcodec.pc
 /usr/lib64/pkgconfig/xrdp.pc
 
 %files lib
 %defattr(-,root,root,-)
-/usr/lib64/libpainter.so.0
-/usr/lib64/libpainter.so.0.0.0
-/usr/lib64/librfxencode.so.0
-/usr/lib64/librfxencode.so.0.0.0
+/V3/usr/lib64/xrdp/libcommon.so
+/V3/usr/lib64/xrdp/libcommon.so.0
+/V3/usr/lib64/xrdp/libcommon.so.0.0.0
+/V3/usr/lib64/xrdp/libmc.so
+/V3/usr/lib64/xrdp/libscp.so
+/V3/usr/lib64/xrdp/libscp.so.0
+/V3/usr/lib64/xrdp/libscp.so.0.0.0
+/V3/usr/lib64/xrdp/libvnc.so
+/V3/usr/lib64/xrdp/libxrdp.so
+/V3/usr/lib64/xrdp/libxrdp.so.0
+/V3/usr/lib64/xrdp/libxrdp.so.0.0.0
+/V3/usr/lib64/xrdp/libxrdpapi.so
+/V3/usr/lib64/xrdp/libxrdpapi.so.0
+/V3/usr/lib64/xrdp/libxrdpapi.so.0.0.0
+/V3/usr/lib64/xrdp/libxup.so
 /usr/lib64/xrdp/libcommon.so
 /usr/lib64/xrdp/libcommon.so.0
 /usr/lib64/xrdp/libcommon.so.0.0.0
