@@ -8,7 +8,7 @@
 %define keepstatic 1
 Name     : xrdp
 Version  : 0.9.22
-Release  : 54
+Release  : 55
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.22/xrdp-0.9.22.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.22/xrdp-0.9.22.tar.gz
 Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.22/xrdp-0.9.22.tar.gz.asc
@@ -145,7 +145,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C.UTF-8
-export SOURCE_DATE_EPOCH=1683558270
+export SOURCE_DATE_EPOCH=1685478882
 export GCC_IGNORE_WERROR=1
 export CFLAGS="$CFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
 export FCFLAGS="$FFLAGS -fdebug-types-section -femit-struct-debug-baseonly -fno-lto -g1 -gno-column-info -gno-variable-location-views -gz=zstd "
@@ -183,7 +183,7 @@ export GCC_IGNORE_WERROR=1
 make %{?_smp_mflags} check
 
 %install
-export SOURCE_DATE_EPOCH=1683558270
+export SOURCE_DATE_EPOCH=1685478882
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/xrdp
 cp %{_builddir}/xrdp-%{version}/COPYING %{buildroot}/usr/share/package-licenses/xrdp/490afe7aa564c6be23045021284706e4710336f6 || :
@@ -302,19 +302,11 @@ rm -f %{buildroot}/usr/share/defaults/xrdp/key.pem
 
 %files lib
 %defattr(-,root,root,-)
-/V3/usr/lib64/xrdp/libcommon.so
-/V3/usr/lib64/xrdp/libcommon.so.0
 /V3/usr/lib64/xrdp/libcommon.so.0.0.0
 /V3/usr/lib64/xrdp/libmc.so
-/V3/usr/lib64/xrdp/libscp.so
-/V3/usr/lib64/xrdp/libscp.so.0
 /V3/usr/lib64/xrdp/libscp.so.0.0.0
 /V3/usr/lib64/xrdp/libvnc.so
-/V3/usr/lib64/xrdp/libxrdp.so
-/V3/usr/lib64/xrdp/libxrdp.so.0
 /V3/usr/lib64/xrdp/libxrdp.so.0.0.0
-/V3/usr/lib64/xrdp/libxrdpapi.so
-/V3/usr/lib64/xrdp/libxrdpapi.so.0
 /V3/usr/lib64/xrdp/libxrdpapi.so.0.0.0
 /V3/usr/lib64/xrdp/libxup.so
 /usr/lib64/xrdp/libcommon.so
