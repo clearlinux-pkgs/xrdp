@@ -8,7 +8,7 @@
 %define keepstatic 1
 Name     : xrdp
 Version  : 0.9.23
-Release  : 58
+Release  : 59
 URL      : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.23/xrdp-0.9.23.tar.gz
 Source0  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.23/xrdp-0.9.23.tar.gz
 Source1  : https://github.com/neutrinolabs/xrdp/releases/download/v0.9.23/xrdp-0.9.23.tar.gz.asc
